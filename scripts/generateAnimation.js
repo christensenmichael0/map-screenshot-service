@@ -32,6 +32,9 @@ async function generateBaseMap(url, bbox, zoom, splitOnTile = true,
     bbox = [96.65977478027344, -65.01360601658364, 293.3589935302735, 43.04179445290156];
 
     let tileArr = generateTiles(bbox, zoom);
+
+    // TODO: find bbox of outer and we already know inner... then pass to buildBasemap
+
     // fetch each tile, stitch, then crop and return image as binary blob
     let tileUrls = [];
     for (let rowIndx = 0; rowIndx < tileArr.length; rowIndx++) {

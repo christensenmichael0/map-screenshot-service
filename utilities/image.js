@@ -103,24 +103,46 @@ const createEmptyImage = async (width, height) => {
     return buffer;
 };
 
-const stitchImage = async (baseImage, subImages, gridSize) => {
+const stitchImage = async (subImages, gridSize, tileSize = 256) => {
+
+    let containerBuffer = null;
+    try {
+        containerBuffer = await createEmptyImage(tileSize * gridSize[1], tileSize * gridSize[0]);
+    } catch (err) {
+        throw err;
+    }
+
+    let baseImage = null;
+    try  {
+        baseImage = await Jimp.read(containerBuffer);
+    } catch (err) {
+        throw err;
+    }
 
     // stitching occurs from left -> right and top -> bottom
-    let base = await Jimp.read(baseImage);
-
     // TODO: do a check that the baseimage is the right size and throw an error if not
     let counter = 0;
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
         for (let colIndx = 0; colIndx < gridSize[1]; colIndx++) {
-            base.composite(subImages[counter], colIndx * 256, rowIndx * 256);
+            baseImage.composite(subImages[counter], colIndx * 256, rowIndx * 256);
             counter++;
         }
     }
 
     // let image = await Jimp.read(tiles[counter]);
-    await base.writeAsync(`output/${Date.now()}_test.png`);
-    console.log('hi');
+    // await baseImage.writeAsync(`output/${Date.now()}_test.png`);
+    return baseImage;
+};
 
+// need to know lat/lng of upper left corner and lower right corner of the tiles
+// turn both into pixels
+
+// find the difference in pixels in x direction and y direction to get x and y
+// get pixel
+const cropImage = async  (image, bboxInfo) => {
+
+    // bbox info contains both outer bbox and inner bbox as key/val pairs
+    // image.crop( x, y, w, h )
 };
 
 // image.composite( src, x, y );

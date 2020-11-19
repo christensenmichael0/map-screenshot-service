@@ -2,44 +2,31 @@ const Jimp = require('jimp');
 const {createEmptyImage, stitchImage} = require('../utilities/image');
 
 const buildBasemap = async (tiles, gridSize, tileSize = 256) => {
-    // TODO: could also use the dimensions the the first tile to determine tile width/height
-    // let container = await createImage(tileSize * gridSize[1], tileSize * gridSize[0],
-    //     () => console.log('remove this cb'));
-
-    let baseImage = null;
-    try {
-        let containerBuffer = await createEmptyImage(tileSize * gridSize[1], tileSize * gridSize[0]);
-        baseImage = await Jimp.read(containerBuffer);
-    } catch (err) {
-        console.log('failed to build basemap container');
-        throw err;
-    }
 
     let counter = 0;
     let imageTiles = [];
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
         for (let colIndx = 0; colIndx < gridSize[1]; colIndx++) {
-
             let image = Jimp.read(tiles[counter]);
             imageTiles.push(image);
-
-            // let image = await Jimp.read(tiles[counter]);
-            // await image.writeAsync(`output/${Date.now()}_test.png`);
-
             counter++;
         }
     }
 
     // wait for all images to be read
-    let subImages = await Promise.all(imageTiles);
+    let subImages = null;
+    try {
+        subImages = await Promise.all(imageTiles);
+    } catch (err) {
+        throw err;
+    }
 
-    let stitchedImage = await stitchImage(baseImage, subImages, gridSize);
+    // let stitchedImage = await stitchImage(baseImage, subImages, gridSize);
+    let stitchedImage = await stitchImage(subImages, gridSize, tileSize);
     console.log('now stitch');
 
-    // image.composite( src, x, y );
+    // now trim
 
-
-    console.log('next composite the tiles into the container')
 };
 
 // LL to UR
