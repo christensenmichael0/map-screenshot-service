@@ -1,6 +1,6 @@
 const Jimp = require('jimp');
 const {generateTiles} = require('./tile');
-const {getImageSeries, stitchImage} = require('./image');
+const {getImageSeries, stitchImage, cropImage} = require('./image');
 
 
 // "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?"
@@ -10,27 +10,69 @@ const mockBaseMapUrl = "https://www.gebco.net/data_and_products/gebco_web_servic
 
 // https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GEBCO_LATEST&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&HEIGHT=256&WIDTH=256&TYPE=TileLayerWMS&ID=gebco&BBOX=-20037508.342789244,-20037508.342789244,20037508.342789244,20037508.342789244&srs=EPSG:3857
 
-const bbox_replace_str = '__box__';
+const BBOX_REPLACE_STR = '__box__';
+const TILE_REPLACE_STR = 'z/y/x';
 
-const getBasemapTemplate = url => {
-    let bboxRegex = /(bbox=)([\d.-]+,[\d.-]+,[\d.-]+,[\d.-]+)/i;
-    let isBboxMatch = url.match(bboxRegex);
+/**
+ *
+ * @param bbox
+ * @return {*}
+ */
+const usePacificMapStitch = bbox => {
+    let updatedBbox = bbox.slice();
 
-    if (!!isBboxMatch) url = url.replace(isBboxMatch[2],bbox_replace_str);
+    // keep coordinates on the -180 to +180 scale
+    if (bbox[0] > 180) updatedBbox[0] -= 360;
+    if (bbox[2] > 180) updatedBbox[2] -= 360;
 
-    return [!!isBboxMatch, url];
+    return updatedBbox;
 };
 
+/**
+ *
+ * @param url
+ * @return {(boolean|void|string|*)[]}
+ */
+const getBasemapTemplate = url => {
+    let bboxRegex = /(bbox=)([\d.-]+,[\d.-]+,[\d.-]+,[\d.-]+)/i;
+    let tileRegex = /\d+\/\d+\/\d+/i;
+
+    let isBboxMatch = url.match(bboxRegex);
+    let isTileMatch = url.match(tileRegex);
+
+    if (!!isBboxMatch) url = url.replace(isBboxMatch[2], BBOX_REPLACE_STR);
+    if (!!tileRegex) url = url.replace(isTileMatch[0], TILE_REPLACE_STR);
+
+    return {splitOnTile: !!isBboxMatch, url};
+};
+
+/**
+ *
+ * @param ulTileBbox
+ * @param lrTileBbox
+ * @return {[*, *, *, *]}
+ */
+const getOuterBbox = (ulTileBbox, lrTileBbox) => {
+    let field = 'bboxDD';
+
+    let minX = ulTileBbox[field][0];
+    let minY = lrTileBbox[field][1];
+    let maxX = lrTileBbox[field][2];
+    let maxY = ulTileBbox[field][3];
+
+    return [minX, minY, maxX, maxY];
+};
 
 /**
  *
  * @param tiles
  * @param gridSize
+ * @param zoom
+ * @param bboxInfo
  * @param tileSize
  * @return {Promise<void>}
  */
-const assembleBasemap = async (tiles, gridSize, tileSize = 256) => {
-
+const assembleBasemap = async (tiles, gridSize, zoom, bboxInfo, tileSize = 256) => {
     let counter = 0;
     let imageTiles = [];
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
@@ -49,33 +91,40 @@ const assembleBasemap = async (tiles, gridSize, tileSize = 256) => {
         throw err;
     }
 
-    // let stitchedImage = await stitchImage(baseImage, subImages, gridSize);
-    let stitchedImage = await stitchImage(subImages, gridSize, tileSize);
-    console.log('now stitch');
+    // stitch tiles
+    let stitchedImage;
+    try {
+        stitchedImage = await stitchImage(subImages, gridSize, tileSize);
+    } catch (err) {
+        throw err;
+    }
 
-    // now trim
-    // TODO: here
+    // crop image
+    let croppedImage;
+    try {
+        croppedImage = await cropImage(stitchedImage, bboxInfo, zoom)
+    } catch (err) {
+        throw err;
+    }
 
+    return croppedImage;
 };
 
 const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
                                useXYZ = false, tileSize = 256) => {
 
-    // hard-code for testing
-    // url = mockBaseMapUrl;
-
     // TODO: replace basemap bbox with an identifiable temp/replacment str
     // similar idea for tiles... replace with {{x}},{{y}}
 
-    [splitOnTile, url] = getBasemapTemplate(url);
-
-    // hard-code for testing
-    // zoom = 3;
-    // bbox = [96.65977478027344, -65.01360601658364, 293.3589935302735, 43.04179445290156];
+    let {splitOnTile, url} = getBasemapTemplate(url);
 
     let tileArr = generateTiles(bbox, zoom);
 
-    // TODO: find bbox of outer and we already know inner... then pass to assembleBasemap
+    // assemble bbox information
+    let ulTileBbox = tileArr[0][0]; // upper left tile
+    let lrTileBbox = tileArr[tileArr.length - 1][tileArr[0].length - 1]; // lower right tile
+    let bboxInfo = {innerBbox: usePacificMapStitch(bbox),
+        outerBbox: usePacificMapStitch(getOuterBbox(ulTileBbox,lrTileBbox))};
 
     // fetch each tile, stitch, then crop and return image as binary blob
     let tileUrls = [];
@@ -83,13 +132,11 @@ const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
         for (let colIndx = 0; colIndx < tileArr[0].length; colIndx++) {
             let tileUrl;
             if (splitOnTile) {
-                tileUrl = url.replace(bbox_replace_str, tileArr[rowIndx][colIndx]['bboxMeter'].join(','));
+                tileUrl = url.replace(BBOX_REPLACE_STR, tileArr[rowIndx][colIndx]['bboxMeter'].join(','));
                 tileUrls.push(tileUrl)
             }
         }
     }
-
-    console.log(tileUrls);
 
     let basemapImageTiles = null;
     try {
@@ -100,11 +147,13 @@ const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
 
     let basemapImage = null;
     try {
-        let response = await assembleBasemap(basemapImageTiles,
-            [tileArr.length, tileArr[0].length]) // [rows, cols]
+        basemapImage = await assembleBasemap(basemapImageTiles,
+            [tileArr.length, tileArr[0].length], zoom, bboxInfo, tileSize) // [rows, cols]
     } catch (err) {
         console.log(err);
     }
+
+    return basemapImage;
 };
 
 

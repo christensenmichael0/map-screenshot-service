@@ -51,6 +51,7 @@ function consume(queue) {
         // update mongo
         try {
             await updateJobStatus(taskData.id, status);
+            console.log(`finished job: ${taskData.id}`);
         } catch (err) {
             return
         }

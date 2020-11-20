@@ -62,6 +62,33 @@ function generateTiles(bbox, zoom) {
     return output;
 }
 
+/**
+ *
+ * @param coordinate - [lng, lat]
+ * @param zoom - the map zoom level
+ * @return {Pixels}
+ */
+function lngLat2Px(coordinate, zoom) {
+    let meters = globalMercator.lngLatToMeters(coordinate);
+
+    return globalMercator.metersToPixels(meters, zoom);
+}
+
+/**
+ *
+ * @param zoom
+ * @return {Pixels}
+ */
+function xMaxPixel(zoom) {
+    let [x,y,z] = globalMercator.wrapTile([-1, 0, zoom]);
+    let tile = globalMercator.googleToTile([x, y, z]);
+    let bboxDD = globalMercator.tileToBBox([tile[0], tile[1], z]);
+
+    return lngLat2Px([...bboxDD.slice(2)], zoom)
+}
+
 module.exports = {
-    generateTiles: generateTiles
+    generateTiles,
+    lngLat2Px,
+    xMaxPixel
 };

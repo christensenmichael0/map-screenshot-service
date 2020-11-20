@@ -1,12 +1,14 @@
 const axios = require('axios');
 const async = require('async');
 const Jimp = require('jimp');
+const {lngLat2Px, xMaxPixel} = require('./tile');
 
 const mockImgUrl = 'https://coastmap.com/ecop/wms.aspx?service=WMS&request=GetMap&version=1.1.1&layers=WW3_WAVE_HEIGHT&styles=WAVE_HEIGHT_STYLE-Jet-0-8&format=image%2Fpng&transparent=true&colorscalerange=0%2C8&autoscalerange=false&time=2020-11-05T12%3A00%3A00Z&exceptions=application%2Fvnd.ogc.se_xml&width=1119&height=765&srs=EPSG%3A3857&bbox=-9403846.942725986%2C3716846.046652051%2C-6666789.833890395%2C5588024.4990731655&ABOVEMAXCOLOR=extend&BELOWMINCOLOR=extend';
 
 
 const getImage = async (url, index, fallbackDimensions = null, callback) => {
     try {
+        // TODO: more error handling in case image isnt returned
         let resp = await axios.get(url,{responseType: 'arraybuffer'});
         // if (!/image/i.test(resp.headers['content-type'])) throw 'image not returned';
 
@@ -134,22 +136,52 @@ const stitchImage = async (subImages, gridSize, tileSize = 256) => {
     return baseImage;
 };
 
-// need to know lat/lng of upper left corner and lower right corner of the tiles
-// turn both into pixels
+/**
+ *
+ * @param image
+ * @param bboxInfo
+ * @param zoom
+ * @return {Promise<void>}
+ */
+const cropImage = async  (image, bboxInfo, zoom) => {
+    let {innerBbox, outerBbox} = bboxInfo;
 
-// find the difference in pixels in x direction and y direction to get x and y
-// get pixel
-const cropImage = async  (image, bboxInfo) => {
+    let ulPixelsOuter = lngLat2Px([outerBbox[0], outerBbox[3]], zoom);
+    let ulPixelsInner = lngLat2Px([innerBbox[0], innerBbox[3]], zoom);
+    let lrPixelsInner = lngLat2Px([innerBbox[2], innerBbox[1]], zoom);
 
-    // bbox info contains both outer bbox and inner bbox as key/val pairs
-    // image.crop( x, y, w, h )
+    let xOffset = ulPixelsInner[0] - ulPixelsOuter[0];
+    let yOffset = ulPixelsOuter[1] - ulPixelsInner[1];
+
+    let width = parseInt(lrPixelsInner[0] - ulPixelsInner[0]);
+    let height = parseInt(ulPixelsInner[1] - lrPixelsInner[1]);
+
+    let crossesIDL = innerBbox[0] - innerBbox[2] > 0 ? true : false;
+    if (crossesIDL) width = parseInt(xMaxPixel(zoom)[0] - ulPixelsInner[0] + lrPixelsInner[0]);
+
+    // crop image
+    image.crop(xOffset, yOffset, width, height );
+
+    // for testing only
+    await image.writeAsync(`output/${Date.now()}_test.png`);
+
+    // return image
+    let buffer;
+    try {
+        buffer = await image.getBufferAsync(image.getMIME());
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    return buffer;
 };
 
-// image.composite( src, x, y );
 
 module.exports = {
     getImage,
     getImageSeries,
     createEmptyImage,
-    stitchImage
+    stitchImage,
+    cropImage
 };

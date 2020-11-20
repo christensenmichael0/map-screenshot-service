@@ -18,6 +18,7 @@ const {IMAGE_SERVICE, IMAGE_QUEUE,
 
 // https://gis.stackexchange.com/questions/22890/geotiff-file-creation-from-tiff-file
 // https://github.com/geotiffjs/geotiff.js/blob/master/README.md
+// https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
 
 const app = express();
 app.use(bodyParser.json());
