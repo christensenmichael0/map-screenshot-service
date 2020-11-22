@@ -41,7 +41,7 @@ const getBasemapTemplate = url => {
     let isTileMatch = url.match(tileRegex);
 
     if (!!isBboxMatch) url = url.replace(isBboxMatch[2], BBOX_REPLACE_STR);
-    if (!!tileRegex) url = url.replace(isTileMatch[0], TILE_REPLACE_STR);
+    if (!!isTileMatch) url = url.replace(isTileMatch[0], TILE_REPLACE_STR);
 
     return {splitOnTile: !!isBboxMatch, url};
 };
@@ -116,7 +116,7 @@ const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
     // TODO: replace basemap bbox with an identifiable temp/replacment str
     // similar idea for tiles... replace with {{x}},{{y}}
 
-    let {splitOnTile, url} = getBasemapTemplate(url);
+    ({splitOnTile, url} = getBasemapTemplate(url));
 
     let tileArr = generateTiles(bbox, zoom);
 

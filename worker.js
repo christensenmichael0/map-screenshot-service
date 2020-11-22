@@ -1,9 +1,9 @@
 const amqp = require('amqplib');
-const {updateJobStatus} = require('../services/MongoServices');
-const generateSingleImage = require('./generateSingleImage');
-const generateAnimation = require('./generateAnimation');
+const {updateJobStatus} = require('./services/MongoServices');
+const generateSingleImage = require('./scripts/generateSingleImage');
+const generateAnimation = require('./scripts/generateAnimation');
 const {IMAGE_QUEUE, ANIMATION_QUEUE, CONN_URL,
-    SUCCESS, FAILED, PENDING} = require('../config');
+    SUCCESS, FAILED, PENDING} = require('./config');
 
 let channel, imageQueue, animationQueue;
 amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {

@@ -15,6 +15,8 @@ const {JobStatus} = require('./services/MongoServices');
 const {IMAGE_SERVICE, IMAGE_QUEUE,
     ANIMATION_SERVICE, ANIMATION_QUEUE} = require('./config');
 
+// https://medium.com/bb-tutorials-and-thoughts/how-to-write-production-ready-node-js-rest-api-javascript-version-db64d3941106
+// https://medium.com/bb-tutorials-and-thoughts/containerize-your-node-js-rest-api-and-run-it-on-docker-bae4c4ef793c
 
 // https://gis.stackexchange.com/questions/22890/geotiff-file-creation-from-tiff-file
 // https://github.com/geotiffjs/geotiff.js/blob/master/README.md
