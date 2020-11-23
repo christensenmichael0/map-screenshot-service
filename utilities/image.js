@@ -178,10 +178,39 @@ const cropImage = async  (image, bboxInfo, zoom) => {
 };
 
 
+const composeImage = async images => {
+
+    // loop through images in reverse order so first one is put on top
+    let baseImage;
+    for (let i = images.length - 1; i >= 0; i--) {
+        if (!baseImage) {
+            baseImage = images[i];
+            continue;
+        }
+
+        baseImage.composite(images[i], 0, 0);
+    }
+
+    // for testing only
+    // await baseImage.writeAsync(`output/${Date.now()}_test.png`);
+
+    let buffer;
+    try {
+        buffer = await baseImage.getBufferAsync(baseImage.getMIME());
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    return buffer;
+};
+
+
 module.exports = {
     getImage,
     getImageSeries,
     createEmptyImage,
     stitchImage,
-    cropImage
+    cropImage,
+    composeImage
 };

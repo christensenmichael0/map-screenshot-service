@@ -2,6 +2,25 @@ const globalMercator = require('global-mercator');
 
 const METER_MAX = 20037508;
 
+/**
+ * Convert decimal degree bbox into meters
+ *
+ * @param bbox [minLon, minLat, maxLon, maxLat] (decimal degrees)
+ * @return {number[]}
+ */
+function ddBBox2Meters(bbox) {
+    let llCoord = globalMercator.lngLatToMeters([bbox[0], bbox[2]]);
+    let urCoord = globalMercator.lngLatToMeters([bbox[1], bbox[3]]);
+
+    return [llCoord[0], urCoord[0], llCoord[1], urCoord[1]];
+}
+
+/**
+ * Constrain bbox to valid range
+ *
+ * @param bbox
+ * @return {*}
+ */
 function constrainMeterConversion(bbox) {
     return bbox.map(val => {
         let absVal = Math.abs(val);
@@ -63,6 +82,7 @@ function generateTiles(bbox, zoom) {
 }
 
 /**
+ * Convert decimal degree coordinate into map pixels
  *
  * @param coordinate - [lng, lat]
  * @param zoom - the map zoom level
@@ -75,6 +95,7 @@ function lngLat2Px(coordinate, zoom) {
 }
 
 /**
+ * Determine the maximum x-direction pixel value at a given zoom level
  *
  * @param zoom
  * @return {Pixels}
@@ -87,7 +108,9 @@ function xMaxPixel(zoom) {
     return lngLat2Px([...bboxDD.slice(2)], zoom)
 }
 
+
 module.exports = {
+    ddBBox2Meters,
     generateTiles,
     lngLat2Px,
     xMaxPixel

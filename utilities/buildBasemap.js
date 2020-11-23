@@ -11,7 +11,7 @@ const mockBaseMapUrl = "https://www.gebco.net/data_and_products/gebco_web_servic
 // https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GEBCO_LATEST&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&HEIGHT=256&WIDTH=256&TYPE=TileLayerWMS&ID=gebco&BBOX=-20037508.342789244,-20037508.342789244,20037508.342789244,20037508.342789244&srs=EPSG:3857
 
 const BBOX_REPLACE_STR = '__box__';
-const TILE_REPLACE_STR = 'z/y/x';
+const TILE_REPLACE_STR = 'z/x/y';
 
 /**
  *
@@ -113,9 +113,6 @@ const assembleBasemap = async (tiles, gridSize, zoom, bboxInfo, tileSize = 256) 
 const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
                                useXYZ = false, tileSize = 256) => {
 
-    // TODO: replace basemap bbox with an identifiable temp/replacment str
-    // similar idea for tiles... replace with {{x}},{{y}}
-
     ({splitOnTile, url} = getBasemapTemplate(url));
 
     let tileArr = generateTiles(bbox, zoom);
@@ -133,6 +130,10 @@ const buildBasemap = async (url, bbox, zoom, splitOnTile = true,
             let tileUrl;
             if (splitOnTile) {
                 tileUrl = url.replace(BBOX_REPLACE_STR, tileArr[rowIndx][colIndx]['bboxMeter'].join(','));
+                tileUrls.push(tileUrl)
+            } else {
+                let tileLoc = tileArr[rowIndx][colIndx]['googleTile'].slice().reverse();
+                tileUrl = url.replace(TILE_REPLACE_STR, tileLoc.join('/'));
                 tileUrls.push(tileUrl)
             }
         }
