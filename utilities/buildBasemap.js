@@ -77,24 +77,26 @@ const assembleBasemap = async (tiles, gridSize, zoom, bboxInfo, tileSize = 256) 
     let imageTiles = [];
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
         for (let colIndx = 0; colIndx < gridSize[1]; colIndx++) {
-            let image = Jimp.read(tiles[counter]);
+            // let image = Jimp.read(tiles[counter]);
+            let image = tiles[counter];
             imageTiles.push(image);
             counter++;
         }
     }
 
     // wait for all images to be read
-    let subImages = null;
-    try {
-        subImages = await Promise.all(imageTiles);
-    } catch (err) {
-        throw err;
-    }
+    // let subImages = null;
+    // try {
+    //     subImages = await Promise.all(imageTiles);
+    // } catch (err) {
+    //     throw err;
+    // }
 
     // stitch tiles
     let stitchedImage;
     try {
-        stitchedImage = await stitchImage(subImages, gridSize, tileSize);
+        // stitchedImage = await stitchImage(subImages, gridSize, tileSize);
+        stitchedImage = await stitchImage(imageTiles, gridSize, tileSize);
     } catch (err) {
         throw err;
     }

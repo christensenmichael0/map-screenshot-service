@@ -20,21 +20,12 @@ const assembleLayers = async images => {
 
     let imageArr = [];
     for (let i of sortedImageKeys) {
-        let image = Jimp.read(images[i]);
-        imageArr.push(image);
-    }
-
-    // wait for all images to be read
-    let readyImages = null;
-    try {
-        readyImages = await Promise.all(imageArr);
-    } catch (err) {
-        throw err;
+        imageArr.push(images[i]);
     }
 
     let composedImage;
     try {
-        composedImage = await composeImage(readyImages)
+        composedImage = await composeImage(imageArr);
     } catch (err) {
         throw err;
     }
@@ -44,13 +35,12 @@ const assembleLayers = async images => {
 
 const buildLayers = async layerArr => {
 
-
     // fetch each tile, stitch, then crop and return image as binary blob
     let imageUrls = [];
     for (let i = 0; i < layerArr.length; i++) {
-        // TODO: generate urls (util func) and push to imageUrls
         let {url, queryParams} = layerArr[i];
         let imageUrl = buildLayerUrl(url, queryParams);
+
         imageUrls.push(imageUrl);
     }
 
@@ -58,21 +48,23 @@ const buildLayers = async layerArr => {
     let fallbackDims = [layerArr[0]['queryParams']['width'],
         layerArr[0]['queryParams']['height']];
 
-    let layerImages = null;
+    let layerImages;
     try {
         layerImages = await getImageSeries(imageUrls, fallbackDims);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
-    let buff;
+    let dataImage;
     try {
-        buff = await assembleLayers(layerImages)
+        dataImage = await assembleLayers(layerImages)
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
-    return buff;
+    return dataImage;
 };
 
 
