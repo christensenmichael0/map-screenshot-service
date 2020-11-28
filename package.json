@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "start:dev": "node app.js && node worker.js",
     "prod": "node dist/api.bundle.js",
     "eslint": "eslint ./",
     "eslint-fix": "eslint ./ --fix",
@@ -21,6 +22,7 @@
     "body-parser": "^1.19.0",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2",
     "global-mercator": "^3.1.0",
     "http": "0.0.1-security",
     "jimp": "^0.16.1",

@@ -46,12 +46,33 @@ const cleanupLayerParams = layers => {
  * @return {string}
  */
 const buildLayerUrl = (url, queryParams) => {
-    const qs = Object.keys(queryParams).map(key => `${key}=${queryParams[key]}`).join('&');
+    let qp = JSON.parse(JSON.stringify(queryParams));
+    let qs = Object.keys(qp).map(key => `${key}=${qp[key]}`).join('&');
+    return `${url}?${qs}`;
+};
+
+/**
+ *
+ * @param url
+ * @param queryParams
+ * @return {string}
+ */
+const buildLegendUrl = (url, queryParams) => {
+    let qp = JSON.parse(JSON.stringify(queryParams));
+
+    delete qp['width'];
+    delete qp['height'];
+
+    qp['request'] = 'GetLegendGraphic';
+
+    let qs = Object.keys(qp).map(key => `${key}=${qp[key]}`).join('&');
     return `${url}?${qs}`;
 };
 
 
+
 module.exports = {
     buildLayerUrl,
+    buildLegendUrl,
     cleanupLayerParams
 };

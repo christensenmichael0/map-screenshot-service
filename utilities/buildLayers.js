@@ -1,4 +1,3 @@
-const Jimp = require('jimp');
 const {buildLayerUrl} = require('./layer');
 const {composeImage, getImageSeries} = require('./image');
 

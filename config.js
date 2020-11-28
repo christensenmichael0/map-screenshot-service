@@ -10,6 +10,12 @@ const PENDING = 'PENDING';
 const FAILED = 'FAILED';
 const SUCCESS = 'SUCCESS';
 
+// max height of map image
+const MAX_IMAGE_HEIGHT = 800;
+
+// cache expiration for job-specific basemap and legend images
+const EXPIRE = 300; // seconds
+
 module.exports = {
     CONN_URL,
     IMAGE_SERVICE,
@@ -18,5 +24,6 @@ module.exports = {
     ANIMATION_QUEUE,
     PENDING,
     FAILED,
-    SUCCESS
+    SUCCESS,
+    MAX_IMAGE_HEIGHT
 };

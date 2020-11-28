@@ -1,6 +1,7 @@
 const async = require('async');
 const axios = require('axios');
 
+// https://stackoverflow.com/questions/61690101/node-js-ffmpeg-creating-a-mp4-video-from-2-or-more-jpg-images
 
 // TODO: the below func should call generateBaseMap and generateLayerOverlays... so extract some logic from it
 // maybe wait for basemap and legend to be fetched and built before moving forward

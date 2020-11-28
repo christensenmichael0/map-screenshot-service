@@ -3,7 +3,14 @@ const async = require('async');
 const Jimp = require('jimp');
 const {lngLat2Px, xMaxPixel} = require('./tile');
 
-
+/**
+ *
+ * @param url
+ * @param index
+ * @param fallbackDimensions
+ * @param callback
+ * @return {Promise<void>}
+ */
 const getImage = async (url, index, fallbackDimensions = null, callback) => {
     let jimpImage;
 
@@ -37,6 +44,12 @@ const getImage = async (url, index, fallbackDimensions = null, callback) => {
     }
 };
 
+/**
+ *
+ * @param urls
+ * @param fallbackDimensions
+ * @return {Promise<unknown>}
+ */
 const getImageSeries = async (urls, fallbackDimensions) => {
 
     // preserve all buffered images in object
@@ -83,7 +96,12 @@ const getImageSeries = async (urls, fallbackDimensions) => {
     });
 };
 
-
+/**
+ *
+ * @param width
+ * @param height
+ * @return {Promise<*>}
+ */
 const createEmptyImage = async (width, height) => {
     let image;
 
@@ -97,6 +115,13 @@ const createEmptyImage = async (width, height) => {
     return image
 };
 
+/**
+ *
+ * @param subImages
+ * @param gridSize
+ * @param tileSize
+ * @return {Promise<*>}
+ */
 const stitchImage = async (subImages, gridSize, tileSize = 256) => {
 
     let baseImage = null;
@@ -145,7 +170,11 @@ const cropImage = async  (image, bboxInfo, zoom) => {
     return image.crop(xOffset, yOffset, width, height );
 };
 
-
+/**
+ *
+ * @param images
+ * @return {Promise<*>}
+ */
 const composeImage = async images => {
 
     // loop through images in reverse order so first one is put on top
@@ -162,6 +191,146 @@ const composeImage = async images => {
     return baseImage;
 };
 
+/**
+ * Stack images vertically with some padding in between them
+ *
+ * @param images
+ * @param padding
+ * @return {Promise<*>}
+ */
+const stackImages = async (images, padding = 10) => {
+
+    let sortedImageKeys = Object.keys(images).map(key =>
+        Number(key)).sort((a,b) => a - b);
+
+    let maxWidth = 0, maxHeight = 0, totalHeight = 0;
+
+    for (let i of sortedImageKeys) {
+        let imgHeight = images[i].getHeight();
+        let imgWidth = images[i].getWidth();
+
+        if (imgHeight > maxHeight) maxHeight = imgHeight;
+        if (imgWidth > maxWidth) maxWidth = imgWidth;
+
+        totalHeight += imgHeight;
+    }
+
+    // add padding between images
+    totalHeight += (Object.keys(images).length - 1) * padding;
+
+    let container = null;
+    try  {
+        container = await createEmptyImage(maxWidth, maxHeight);
+    } catch (err) {
+        throw err;
+    }
+
+    let xPos = 0, yPos = 0;
+    for (let i of sortedImageKeys) {
+        let imgHeight = images[i].getHeight();
+
+        // add image
+        container.composite(images[i], xPos, yPos);
+
+        // update y-position
+        yPos = imgHeight + padding
+    }
+
+    return container
+};
+
+/**
+ *
+ * @param image
+ * @param width
+ * @param height
+ * @return {Promise<*>}
+ */
+const resizeImage = async (image, width, height) => {
+    let initWidth = image.getWidth();
+    let initHeight = image.getHeight();
+
+    if (!width) width = Jimp.AUTO;
+    if (!height) height = Jimp.AUTO;
+
+    if (!initWidth && !initHeight) {
+        width = initWidth;
+        height = initHeight;
+    }
+
+    let resizedImage;
+    try {
+        resizedImage = await image.resize(width, height);
+    } catch (err) {
+        throw err;
+    }
+
+    return resizedImage;
+};
+
+/**
+ *
+ * @param dataLayers
+ * @param baseImage
+ * @param legendImage
+ * @return {Promise<*>}
+ */
+const assembleImageComponents = async (dataLayers, baseImage, legendImage) => {
+
+    const outerMargin = 10;
+    const extraPadding = 5;
+
+    const imageWidth = baseImage.getWidth();
+    const imageHeight = baseImage.getHeight();
+
+    const legendWidth = legendImage.getWidth();
+    const legendHeight = legendImage.getHeight();
+
+    const textHeight = 16;
+    const headerHeight  = dataLayers.length * textHeight;
+
+    const jimpFont = Jimp.FONT_SANS_16_BLACK;
+    const font = await Jimp.loadFont(jimpFont);
+
+    // determine width and height of outer container
+    const containerWidth = (outerMargin * 2) + imageWidth + extraPadding +
+        legendWidth;
+
+    const containerHeight = (outerMargin * 2) + textHeight + extraPadding +
+        Math.max(imageHeight, legendHeight);
+
+
+    // create outer container
+    let container;
+    try {
+        container = await createEmptyImage(containerWidth, containerHeight);
+        container.background(0xFFFFFFFF)
+    } catch (err) {
+        throw err;
+    }
+
+    // add header text
+    for (let i = 0; i < dataLayers.length; i++) {
+        let yPos = outerMargin + (i * textHeight);
+        let layerTitle = dataLayers[i]['title'];
+
+        if (!layerTitle) continue;
+
+        container.print(font, outerMargin, yPos, layerTitle);
+    }
+
+    // add base image
+    let baseImageXPos = outerMargin;
+    let baseImageYPos = outerMargin + textHeight + extraPadding;
+    container.composite(baseImage, baseImageXPos, baseImageYPos);
+
+    // add legend image
+    let legendImageXPos = outerMargin + imageWidth + extraPadding;
+    let legendImageYPos = baseImageYPos;
+    container.composite(legendImage, legendImageXPos, legendImageYPos);
+
+    return container;
+};
 
 module.exports = {
     getImage,
@@ -169,5 +338,8 @@ module.exports = {
     createEmptyImage,
     stitchImage,
     cropImage,
-    composeImage
+    composeImage,
+    assembleImageComponents,
+    resizeImage,
+    stackImages
 };
