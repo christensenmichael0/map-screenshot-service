@@ -8,7 +8,7 @@ const {ddBBox2Meters} = require('./tile');
 const cleanupLayerParams = layers => {
 
     let removeParams = ['use_bbox', 'basemap_thumbnail', 'basemap_template', 'starttime',
-    'endtime', 'movieformat', 'eds_key', 'title', 'url', 'duration','zoom'];
+    'endtime', 'movieformat', 'eds_key', 'title', 'url', 'duration','zoom', 'map_time'];
 
     let output = [];
     for (let indx in layers) {

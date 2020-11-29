@@ -270,12 +270,13 @@ const resizeImage = async (image, width, height) => {
 
 /**
  *
+ * @param mapTime
  * @param dataLayers
  * @param baseImage
  * @param legendImage
  * @return {Promise<*>}
  */
-const assembleImageComponents = async (dataLayers, baseImage, legendImage) => {
+const assembleImageComponents = async (mapTime, dataLayers, baseImage, legendImage, frameInfo = null) => {
 
     const outerMargin = 10;
     const extraPadding = 5;
@@ -287,7 +288,8 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage) => {
     const legendHeight = legendImage.getHeight();
 
     const textHeight = 16;
-    const headerHeight  = dataLayers.length * textHeight;
+    const extraHeaderLines = 1;
+    const headerHeight  = (dataLayers.length + extraHeaderLines) * textHeight;
 
     const jimpFont = Jimp.FONT_SANS_16_BLACK;
     const font = await Jimp.loadFont(jimpFont);
@@ -296,9 +298,8 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage) => {
     const containerWidth = (outerMargin * 2) + imageWidth + extraPadding +
         legendWidth;
 
-    const containerHeight = (outerMargin * 2) + textHeight + extraPadding +
+    const containerHeight = (outerMargin * 2) + headerHeight + extraPadding +
         Math.max(imageHeight, legendHeight);
-
 
     // create outer container
     let container;
@@ -309,10 +310,17 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage) => {
         throw err;
     }
 
+    // TODO: need padding between text lines
+    // TODO: put frame info on its own line
+
     // add header text
+    let frameText = frameInfo ? ` (${frameInfo['val']} of ${frameInfo['total']})` : '';
+
+    container.print(font, outerMargin, 0, `Map Time - ${mapTime}${frameText}`);
+
     for (let i = 0; i < dataLayers.length; i++) {
-        let yPos = outerMargin + (i * textHeight);
-        let layerTitle = dataLayers[i]['title'];
+        let yPos = outerMargin + (i * textHeight) + extraHeaderLines;
+        let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['time']})`;
 
         if (!layerTitle) continue;
 

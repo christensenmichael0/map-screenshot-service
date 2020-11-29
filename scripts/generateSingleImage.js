@@ -4,13 +4,15 @@ const buildLayers = require('../utilities/buildLayers');
 const {cleanupLayerParams} = require('../utilities/layer');
 const {assembleImageComponents, composeImage,
     resizeImage} = require('../utilities/image');
+const {putObject} = require('../services/aws');
 const {MAX_IMAGE_HEIGHT} = require('../config');
 
 
 const generateSingleImage = async layerInfo => {
 
     const {id, data} = layerInfo;
-    let {basemap_thumbnail: basemapUrl, zoom, use_bbox} = data[0]; // data is an array of objects -- 1 per layer
+    // data is an array of objects -- 1 per layer
+    let {basemap_thumbnail: basemapUrl, zoom, use_bbox, map_time: mapTime} = data[0];
 
     let bbox = use_bbox.split(',').map(coord => Number(coord));
 
@@ -63,18 +65,37 @@ const generateSingleImage = async layerInfo => {
     // add headers and legends
     let outputImage;
     try {
-        outputImage = await assembleImageComponents(layerArr, resizedImage, legendImage);
+        outputImage = await assembleImageComponents(mapTime, layerArr, resizedImage, legendImage);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
-    // TODO: i'm here... need to save to s3 and a route to retrieve from s3
+    let mimeType = outputImage.getMIME();
+
+    // get image buffer
+    let buffer;
+    try {
+        buffer = await outputImage.getBufferAsync(mimeType);
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    try {
+        await putObject(`${id}.${mimeType.split('/')[1]}`, buffer);
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    return buffer;
 
 
     // TODO: remove.. for testing only
     // await composedImage.writeAsync(`output/${Date.now()}_test.png`);
-    await resizedImage.writeAsync(`output/${Date.now()}_test.png`);
-    return resizedImage;
+    // await resizedImage.writeAsync(`output/${Date.now()}_test.png`);
+    // return resizedImage;
 };
 
 
