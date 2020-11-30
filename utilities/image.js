@@ -2,6 +2,7 @@ const axios = require('axios');
 const async = require('async');
 const Jimp = require('jimp');
 const {lngLat2Px, xMaxPixel} = require('./tile');
+const {MAX_REQUEST_CONCURRENCY} = require('../config');
 
 /**
  *
@@ -63,7 +64,7 @@ const getImageSeries = async (urls, fallbackDimensions) => {
 
             // call action and trigger callback on completion
             action(url, index, fallbackDimensions, callback);
-        }, 2);
+        }, MAX_REQUEST_CONCURRENCY);
 
         // assign a callback
         q.drain(function() {
@@ -276,10 +277,11 @@ const resizeImage = async (image, width, height) => {
  * @param legendImage
  * @return {Promise<*>}
  */
-const assembleImageComponents = async (mapTime, dataLayers, baseImage, legendImage, frameInfo = null) => {
+const assembleImageComponents = async (dataLayers, baseImage, legendImage, frameInfo = null) => {
 
     const outerMargin = 10;
-    const extraPadding = 5;
+    const extraMapPadding = 5;
+    const headerTextPadding = 3;
 
     const imageWidth = baseImage.getWidth();
     const imageHeight = baseImage.getHeight();
@@ -289,16 +291,19 @@ const assembleImageComponents = async (mapTime, dataLayers, baseImage, legendIma
 
     const textHeight = 16;
     const extraHeaderLines = 1;
-    const headerHeight  = (dataLayers.length + extraHeaderLines) * textHeight;
+    const numHeaderRows = dataLayers.length + extraHeaderLines;
+
+    const additionalHeaderPadding = (numHeaderRows - 1) * headerTextPadding;
+    const headerHeight  = (numHeaderRows * textHeight) + additionalHeaderPadding;
 
     const jimpFont = Jimp.FONT_SANS_16_BLACK;
     const font = await Jimp.loadFont(jimpFont);
 
     // determine width and height of outer container
-    const containerWidth = (outerMargin * 2) + imageWidth + extraPadding +
+    const containerWidth = (outerMargin * 2) + imageWidth + extraMapPadding +
         legendWidth;
 
-    const containerHeight = (outerMargin * 2) + headerHeight + extraPadding +
+    const containerHeight = (outerMargin * 2) + headerHeight + extraMapPadding +
         Math.max(imageHeight, legendHeight);
 
     // create outer container
@@ -310,17 +315,16 @@ const assembleImageComponents = async (mapTime, dataLayers, baseImage, legendIma
         throw err;
     }
 
-    // TODO: need padding between text lines
-    // TODO: put frame info on its own line
-
     // add header text
     let frameText = frameInfo ? ` (${frameInfo['val']} of ${frameInfo['total']})` : '';
 
+    // map time is the same for all layers which comprise a single frame (validTime is not necessarily)
+    let mapTime = dataLayers[0]['mapTime'];
     container.print(font, outerMargin, 0, `Map Time - ${mapTime}${frameText}`);
 
     for (let i = 0; i < dataLayers.length; i++) {
-        let yPos = outerMargin + (i * textHeight) + extraHeaderLines;
-        let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['time']})`;
+        let yPos = outerMargin + (i * textHeight) + extraHeaderLines + headerTextPadding;
+        let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['validTime']})`;
 
         if (!layerTitle) continue;
 
@@ -329,11 +333,11 @@ const assembleImageComponents = async (mapTime, dataLayers, baseImage, legendIma
 
     // add base image
     let baseImageXPos = outerMargin;
-    let baseImageYPos = outerMargin + textHeight + extraPadding;
+    let baseImageYPos = outerMargin + textHeight + extraMapPadding;
     container.composite(baseImage, baseImageXPos, baseImageYPos);
 
     // add legend image
-    let legendImageXPos = outerMargin + imageWidth + extraPadding;
+    let legendImageXPos = outerMargin + imageWidth + extraMapPadding;
     let legendImageYPos = baseImageYPos;
     container.composite(legendImage, legendImageXPos, legendImageYPos);
 

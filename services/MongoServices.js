@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const {MONGO_URL} = require('../config');
 
 // https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
 
 // connect to mongo daemon
 mongoose
     .connect(
-        'mongodb://localhost:27017/process_status',
+        `${MONGO_URL}/process_status`,
         { useNewUrlParser: true }
     )
     .then(() => {

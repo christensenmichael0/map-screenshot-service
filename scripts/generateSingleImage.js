@@ -10,9 +10,9 @@ const {MAX_IMAGE_HEIGHT} = require('../config');
 
 const generateSingleImage = async layerInfo => {
 
+    // Note: data is an array of objects -- 1 object per layer
     const {id, data} = layerInfo;
-    // data is an array of objects -- 1 per layer
-    let {basemap_thumbnail: basemapUrl, zoom, use_bbox, map_time: mapTime} = data[0];
+    let {basemap_thumbnail: basemapUrl, zoom, use_bbox} = data[0];
 
     let bbox = use_bbox.split(',').map(coord => Number(coord));
 
@@ -22,6 +22,7 @@ const generateSingleImage = async layerInfo => {
         basemapImage = await buildBasemapCache(basemapUrl, bbox, zoom, id);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
     //  cleanup query parameters
@@ -33,6 +34,7 @@ const generateSingleImage = async layerInfo => {
         legendImage = await buildLegendCache(layerArr, id);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
     // assemble all data layers
@@ -41,6 +43,7 @@ const generateSingleImage = async layerInfo => {
         dataImage = await buildLayers(layerArr);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
     // overlay data layers onto basemap
@@ -49,6 +52,7 @@ const generateSingleImage = async layerInfo => {
         composedImage = await composeImage([dataImage, basemapImage])
     } catch (err) {
         console.log(err);
+        throw err;
     }
 
     // resize the image if necessary
@@ -65,7 +69,7 @@ const generateSingleImage = async layerInfo => {
     // add headers and legends
     let outputImage;
     try {
-        outputImage = await assembleImageComponents(mapTime, layerArr, resizedImage, legendImage);
+        outputImage = await assembleImageComponents(layerArr, resizedImage, legendImage);
     } catch (err) {
         console.log(err);
         throw err;
@@ -90,12 +94,6 @@ const generateSingleImage = async layerInfo => {
     }
 
     return buffer;
-
-
-    // TODO: remove.. for testing only
-    // await composedImage.writeAsync(`output/${Date.now()}_test.png`);
-    // await resizedImage.writeAsync(`output/${Date.now()}_test.png`);
-    // return resizedImage;
 };
 
 

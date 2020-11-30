@@ -1,5 +1,6 @@
 const amqp = require('amqplib/callback_api');
-const CONN_URL = 'amqp://localhost';
+const CONN_URL = require('../config');
+
 let ch = null;
 
 amqp.connect(CONN_URL, (err, conn) => {

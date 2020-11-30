@@ -9,3 +9,5 @@
 
 // for testing only
 // await image.writeAsync(`output/${Date.now()}_test.png`);
+
+docker build -t screenshot-service:latest .

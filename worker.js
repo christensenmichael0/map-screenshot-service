@@ -6,6 +6,7 @@ const {IMAGE_QUEUE, ANIMATION_QUEUE, CONN_URL,
     SUCCESS, FAILED, PENDING} = require('./config');
 
 let channel, imageQueue, animationQueue;
+
 amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {
         channel = ch;
         return channel.assertQueue(IMAGE_QUEUE);

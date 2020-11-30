@@ -28,32 +28,32 @@ services:
     networks:
       - app-network
 
-  image-capture:
-    container_name: image-capture
-    build:
-      context: '.'
-      dockerfile: Dockerfile
-    depends_on:
-      - rabbitmq
-      - mongo
-    environment:
-      - CONN_URL=amqp://rabbitmq
-      - MONGO_URL=mongodb://mongo:27017
-    restart: on-failure
-    ports:
-      - 5005:5005
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 3G
-        reservations:
-          cpus: '0.1'
-          memory: 50M
-    networks:
-      - app-network
-    links:
-      - rabbitmq
+#  image-capture:
+#    container_name: image-capture
+#    build:
+#      context: '.'
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - rabbitmq
+#      - mongo
+#    environment:
+#      - CONN_URL=amqp://rabbitmq
+#      - MONGO_URL=mongodb://mongo:27017
+#    restart: on-failure
+#    ports:
+#      - 5005:5005
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.50'
+#          memory: 3G
+#        reservations:
+#          cpus: '0.1'
+#          memory: 50M
+#    networks:
+#      - app-network
+#    links:
+#      - rabbitmq
 
 volumes:
   rabbitmq_data: {}

@@ -5,7 +5,10 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "start:dev": "node app.js && node worker.js",
+    "worker": "node worker.js",
+    "clustered:worker": "node clusteredWorker.js",
+    "start:dev": "run-p start worker",
+    "start:dev:clustered": "run-p start clustered:worker",
     "prod": "node dist/api.bundle.js",
     "eslint": "eslint ./",
     "eslint-fix": "eslint ./ --fix",

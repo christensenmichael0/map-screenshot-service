@@ -1,8 +1,4 @@
 const express = require ('express');
-// const bodyParser = require('body-parser');
-// const path = require('path');
-// const morgan = require('morgan');
-
 const {publishToQueue} = require('../services/MQServices');
 const {JobStatus} = require('../services/MongoServices');
 

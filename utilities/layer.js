@@ -17,6 +17,7 @@ const cleanupLayerParams = layers => {
         let layerInfo = {};
 
         layerInfo['title'] = layer['title'];
+        layerInfo['mapTime'] = layer['map_time'];
         layerInfo['validTime'] = layer['time'];
         layerInfo['url'] = layer['url'];
 
