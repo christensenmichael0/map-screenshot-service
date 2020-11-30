@@ -1,35 +1,59 @@
 const axios = require('axios');
 const async = require('async');
 const Jimp = require('jimp');
+const {lngLat2Px, xMaxPixel} = require('./tile');
+const {MAX_REQUEST_CONCURRENCY} = require('../config');
 
-const mockImgUrl = 'https://coastmap.com/ecop/wms.aspx?service=WMS&request=GetMap&version=1.1.1&layers=WW3_WAVE_HEIGHT&styles=WAVE_HEIGHT_STYLE-Jet-0-8&format=image%2Fpng&transparent=true&colorscalerange=0%2C8&autoscalerange=false&time=2020-11-05T12%3A00%3A00Z&exceptions=application%2Fvnd.ogc.se_xml&width=1119&height=765&srs=EPSG%3A3857&bbox=-9403846.942725986%2C3716846.046652051%2C-6666789.833890395%2C5588024.4990731655&ABOVEMAXCOLOR=extend&BELOWMINCOLOR=extend';
-
-
+/**
+ *
+ * @param url
+ * @param index
+ * @param fallbackDimensions
+ * @param callback
+ * @return {Promise<void>}
+ */
 const getImage = async (url, index, fallbackDimensions = null, callback) => {
+    let jimpImage;
+
     try {
         let resp = await axios.get(url,{responseType: 'arraybuffer'});
-        // if (!/image/i.test(resp.headers['content-type'])) throw 'image not returned';
+        if (!resp.headers['content-type'].match(/image/i)) throw 'image not returned';
 
-        callback(null, {index, buff: Buffer.from(resp.data, 'binary')})
+        try  {
+            jimpImage = await Jimp.read(Buffer.from(resp.data, 'binary'));
+        } catch (err) {
+            throw err;
+        }
+
+        callback(null, {index, img: jimpImage})
     } catch (err) {
-        let imageBuffer;
 
         if (fallbackDimensions) {
             try {
-                imageBuffer = await createEmptyImage(...fallbackDimensions);
+                jimpImage = await createEmptyImage(...fallbackDimensions);
             } catch(e) {
                 console.log(e)
             }
         }
 
-        callback(err, {index, buff: imageBuffer});
+        // return an empty image and if that fails then trigger the error control flow
+        if (jimpImage) {
+            callback(null, {index, img: jimpImage});
+        } else {
+            callback(err);
+        }
     }
 };
 
+/**
+ *
+ * @param urls
+ * @param fallbackDimensions
+ * @return {Promise<unknown>}
+ */
 const getImageSeries = async (urls, fallbackDimensions) => {
 
     // preserve all buffered images in object
-
     return new Promise((resolve, reject) => {
         const layerImages = {};
 
@@ -40,7 +64,7 @@ const getImageSeries = async (urls, fallbackDimensions) => {
 
             // call action and trigger callback on completion
             action(url, index, fallbackDimensions, callback);
-        }, 2);
+        }, MAX_REQUEST_CONCURRENCY);
 
         // assign a callback
         q.drain(function() {
@@ -54,11 +78,6 @@ const getImageSeries = async (urls, fallbackDimensions) => {
             reject(err);
         });
 
-        // // add some items to the queue (batch-wise)
-        // q.push([{name: 'baz'},{name: 'bay'},{name: 'bax'}], function(err) {
-        //     console.log('finished processing item');
-        // });
-
         for (let i = 0; i < urls.length; i++) {
 
             let task = {
@@ -70,21 +89,22 @@ const getImageSeries = async (urls, fallbackDimensions) => {
             };
 
             q.push(task, function (err, data) {
-                if (err) {
-                    console.log('An error occurred during the image fetch');
-                    // still add the blank image
-                    if (data) layerImages[data['index']] = data['buff']
+                if (!err) {
+                    layerImages[data['index']] = data['img']
                 }
-
-                layerImages[data['index']] = data['buff']
             })
         }
     });
 };
 
-
+/**
+ *
+ * @param width
+ * @param height
+ * @return {Promise<*>}
+ */
 const createEmptyImage = async (width, height) => {
-    let image = null, buffer = null;
+    let image;
 
     try {
         image = await new Jimp(width, height, 0x0);
@@ -93,41 +113,245 @@ const createEmptyImage = async (width, height) => {
         throw err;
     }
 
-    try {
-        buffer = await image.getBufferAsync(image.getMIME());
+    return image
+};
+
+/**
+ *
+ * @param subImages
+ * @param gridSize
+ * @param tileSize
+ * @return {Promise<*>}
+ */
+const stitchImage = async (subImages, gridSize, tileSize = 256) => {
+
+    let baseImage = null;
+    try  {
+        baseImage = await createEmptyImage(tileSize * gridSize[1], tileSize * gridSize[0]);
     } catch (err) {
-        console.log(err);
         throw err;
     }
 
-    return buffer;
-};
-
-const stitchImage = async (baseImage, subImages, gridSize) => {
-
     // stitching occurs from left -> right and top -> bottom
-    let base = await Jimp.read(baseImage);
-
-    // TODO: do a check that the baseimage is the right size and throw an error if not
     let counter = 0;
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
         for (let colIndx = 0; colIndx < gridSize[1]; colIndx++) {
-            base.composite(subImages[counter], colIndx * 256, rowIndx * 256);
+            baseImage.composite(subImages[counter], colIndx * 256, rowIndx * 256);
             counter++;
         }
     }
 
-    // let image = await Jimp.read(tiles[counter]);
-    await base.writeAsync(`output/${Date.now()}_test.png`);
-    console.log('hi');
-
+    return baseImage;
 };
 
-// image.composite( src, x, y );
+/**
+ *
+ * @param image
+ * @param bboxInfo
+ * @param zoom
+ * @return {Promise<void>}
+ */
+const cropImage = async  (image, bboxInfo, zoom) => {
+    let {innerBbox, outerBbox} = bboxInfo;
+
+    let ulPixelsOuter = lngLat2Px([outerBbox[0], outerBbox[3]], zoom);
+    let ulPixelsInner = lngLat2Px([innerBbox[0], innerBbox[3]], zoom);
+    let lrPixelsInner = lngLat2Px([innerBbox[2], innerBbox[1]], zoom);
+
+    let xOffset = ulPixelsInner[0] - ulPixelsOuter[0];
+    let yOffset = ulPixelsOuter[1] - ulPixelsInner[1];
+
+    let width = parseInt(lrPixelsInner[0] - ulPixelsInner[0]);
+    let height = parseInt(ulPixelsInner[1] - lrPixelsInner[1]);
+
+    let crossesIDL = innerBbox[0] - innerBbox[2] > 0 ? true : false;
+    if (crossesIDL) width = parseInt(xMaxPixel(zoom)[0] - ulPixelsInner[0] + lrPixelsInner[0]);
+
+    // crop image
+    return image.crop(xOffset, yOffset, width, height );
+};
+
+/**
+ *
+ * @param images
+ * @return {Promise<*>}
+ */
+const composeImage = async images => {
+
+    // loop through images in reverse order so first one is put on top
+    let baseImage;
+    for (let i = images.length - 1; i >= 0; i--) {
+        if (!baseImage) {
+            baseImage = images[i];
+            continue;
+        }
+
+        baseImage.composite(images[i], 0, 0);
+    }
+
+    return baseImage;
+};
+
+/**
+ * Stack images vertically with some padding in between them
+ *
+ * @param images
+ * @param padding
+ * @return {Promise<*>}
+ */
+const stackImages = async (images, padding = 10) => {
+
+    let sortedImageKeys = Object.keys(images).map(key =>
+        Number(key)).sort((a,b) => a - b);
+
+    let maxWidth = 0, maxHeight = 0, totalHeight = 0;
+
+    for (let i of sortedImageKeys) {
+        let imgHeight = images[i].getHeight();
+        let imgWidth = images[i].getWidth();
+
+        if (imgHeight > maxHeight) maxHeight = imgHeight;
+        if (imgWidth > maxWidth) maxWidth = imgWidth;
+
+        totalHeight += imgHeight;
+    }
+
+    // add padding between images
+    totalHeight += (Object.keys(images).length - 1) * padding;
+
+    let container = null;
+    try  {
+        container = await createEmptyImage(maxWidth, maxHeight);
+    } catch (err) {
+        throw err;
+    }
+
+    let xPos = 0, yPos = 0;
+    for (let i of sortedImageKeys) {
+        let imgHeight = images[i].getHeight();
+
+        // add image
+        container.composite(images[i], xPos, yPos);
+
+        // update y-position
+        yPos = imgHeight + padding
+    }
+
+    return container
+};
+
+/**
+ *
+ * @param image
+ * @param width
+ * @param height
+ * @return {Promise<*>}
+ */
+const resizeImage = async (image, width, height) => {
+    let initWidth = image.getWidth();
+    let initHeight = image.getHeight();
+
+    if (!width) width = Jimp.AUTO;
+    if (!height) height = Jimp.AUTO;
+
+    if (!initWidth && !initHeight) {
+        width = initWidth;
+        height = initHeight;
+    }
+
+    let resizedImage;
+    try {
+        resizedImage = await image.resize(width, height);
+    } catch (err) {
+        throw err;
+    }
+
+    return resizedImage;
+};
+
+/**
+ *
+ * @param mapTime
+ * @param dataLayers
+ * @param baseImage
+ * @param legendImage
+ * @return {Promise<*>}
+ */
+const assembleImageComponents = async (dataLayers, baseImage, legendImage, frameInfo = null) => {
+
+    const outerMargin = 10;
+    const extraMapPadding = 5;
+    const headerTextPadding = 3;
+
+    const imageWidth = baseImage.getWidth();
+    const imageHeight = baseImage.getHeight();
+
+    const legendWidth = legendImage.getWidth();
+    const legendHeight = legendImage.getHeight();
+
+    const textHeight = 16;
+    const extraHeaderLines = 1;
+    const numHeaderRows = dataLayers.length + extraHeaderLines;
+
+    const additionalHeaderPadding = (numHeaderRows - 1) * headerTextPadding;
+    const headerHeight  = (numHeaderRows * textHeight) + additionalHeaderPadding;
+
+    const jimpFont = Jimp.FONT_SANS_16_BLACK;
+    const font = await Jimp.loadFont(jimpFont);
+
+    // determine width and height of outer container
+    const containerWidth = (outerMargin * 2) + imageWidth + extraMapPadding +
+        legendWidth;
+
+    const containerHeight = (outerMargin * 2) + headerHeight + extraMapPadding +
+        Math.max(imageHeight, legendHeight);
+
+    // create outer container
+    let container;
+    try {
+        container = await createEmptyImage(containerWidth, containerHeight);
+        container.background(0xFFFFFFFF)
+    } catch (err) {
+        throw err;
+    }
+
+    // add header text
+    let frameText = frameInfo ? ` (${frameInfo['val']} of ${frameInfo['total']})` : '';
+
+    // map time is the same for all layers which comprise a single frame (validTime is not necessarily)
+    let mapTime = dataLayers[0]['mapTime'];
+    container.print(font, outerMargin, 0, `Map Time - ${mapTime}${frameText}`);
+
+    for (let i = 0; i < dataLayers.length; i++) {
+        let yPos = outerMargin + (i * textHeight) + extraHeaderLines + headerTextPadding;
+        let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['validTime']})`;
+
+        if (!layerTitle) continue;
+
+        container.print(font, outerMargin, yPos, layerTitle);
+    }
+
+    // add base image
+    let baseImageXPos = outerMargin;
+    let baseImageYPos = outerMargin + textHeight + extraMapPadding;
+    container.composite(baseImage, baseImageXPos, baseImageYPos);
+
+    // add legend image
+    let legendImageXPos = outerMargin + imageWidth + extraMapPadding;
+    let legendImageYPos = baseImageYPos;
+    container.composite(legendImage, legendImageXPos, legendImageYPos);
+
+    return container;
+};
 
 module.exports = {
     getImage,
     getImageSeries,
     createEmptyImage,
-    stitchImage
+    stitchImage,
+    cropImage,
+    composeImage,
+    assembleImageComponents,
+    resizeImage,
+    stackImages
 };
