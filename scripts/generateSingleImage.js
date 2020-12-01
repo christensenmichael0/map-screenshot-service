@@ -93,7 +93,7 @@ const generateSingleImage = async layerInfo => {
         throw err;
     }
 
-    return buffer;
+    return outputImage;
 };
 
 
