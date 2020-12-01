@@ -28,8 +28,8 @@ services:
     networks:
       - app-network
 
-  image-capture:
-    container_name: image-capture
+  image-generation-service:
+    container_name: image-generation-service
     build:
       context: '.'
       dockerfile: Dockerfile
