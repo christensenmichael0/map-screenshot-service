@@ -28,7 +28,7 @@ services:
     networks:
       - app-network
 
-  image-capture:
+  image-generation-service:
     container_name: image-capture
     build:
       context: '.'
