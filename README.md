@@ -21,10 +21,10 @@ MongoDB is used as a central store of task status information.
 
 Routes:
 
-/api/service/image (POST)
-/api/service/animation (POST)
-/api/job-status/{someJobId} (GET)
-/api/download/{someJobId} (GET)
+/api/service/image (POST)<br>
+/api/service/animation (POST)<br>
+/api/job-status/{someJobId} (GET)<br>
+/api/download/{someJobId} (GET)<br>
 
 See POSTMAN collection for example requests:
 
