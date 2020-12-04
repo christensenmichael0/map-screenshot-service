@@ -1,20 +1,18 @@
 const buildBasemapCache = require('../utilities/buildBasemapCache');
 const buildLegendCache = require('../utilities/buildLegendCache');
 const buildLayers = require('../utilities/buildLayers');
-const {cleanupLayerParams} = require('../utilities/layer');
+const {buildLayerUrl, cleanupLayerParams} = require('../utilities/layer');
 const {assembleImageComponents, composeImage,
     resizeImage} = require('../utilities/image');
 const {putObject} = require('../services/aws');
 const {MAX_IMAGE_HEIGHT} = require('../config');
 
 
-const generateSingleImage = async layerInfo => {
+const generateSingleImage = async payload => {
 
-    // Note: data is an array of objects -- 1 object per layer
-    const {id, data} = layerInfo;
-    let {basemap_thumbnail: basemapUrl, zoom, use_bbox} = data[0];
-
-    let bbox = use_bbox.split(',').map(coord => Number(coord));
+    const {id, data} = payload;
+    let {url, zoom, bbox, params} = data['basemap'];
+    let basemapUrl = buildLayerUrl(url, params);
 
     // create basemap
     let basemapImage;
@@ -26,7 +24,8 @@ const generateSingleImage = async layerInfo => {
     }
 
     //  cleanup query parameters
-    let layerArr = cleanupLayerParams(data);
+    // TODO: should return an array of arrays (each element in the outer array represents a frame)
+    let layerArr = cleanupLayerParams(data)[0];
 
     // assemble all legends
     let legendImage;

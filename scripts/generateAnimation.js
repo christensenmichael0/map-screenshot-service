@@ -6,7 +6,7 @@ const axios = require('axios');
 // TODO: the below func should call generateBaseMap and generateLayerOverlays... so extract some logic from it
 // maybe wait for basemap and legend to be fetched and built before moving forward
 
-async function generateAnimation (layers, dateTimeRange, dimensions, outputFormat) {
+const generateAnimation = async payload => {
     // layers array has a length equal to the number of layers on the map being animated
     // each layer object must contain a key: map_times which will be an array of times,
     // additionally key: valid_times should be provided and container an array of times equal in length
@@ -24,6 +24,8 @@ async function generateAnimation (layers, dateTimeRange, dimensions, outputForma
     // this includes an array of datetimes and the other properties
 
     //{layerParams: {...}, dateTimes: [...]}
+
+    console.log('hi');
 }
 
 module.exports = generateAnimation;
