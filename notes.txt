@@ -10,4 +10,6 @@
 // for testing only
 // await image.writeAsync(`output/${Date.now()}_test.png`);
 
+docker-compose -f docker-compose.local.yml up -d
+
 docker build -t screenshot-service:latest .
