@@ -24,8 +24,7 @@ const generateSingleImage = async payload => {
     }
 
     //  cleanup query parameters
-    // TODO: should return an array of arrays (each element in the outer array represents a frame)
-    let layerArr = cleanupLayerParams(data)[0];
+    let layerArr = cleanupLayerParams(data);
 
     // assemble all legends
     let legendImage;
@@ -48,7 +47,7 @@ const generateSingleImage = async payload => {
     // overlay data layers onto basemap
     let composedImage;
     try {
-        composedImage = await composeImage([dataImage, basemapImage])
+        composedImage = await composeImage([dataImage, basemapImage.clone()])
     } catch (err) {
         console.log(err);
         throw err;

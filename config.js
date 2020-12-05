@@ -2,8 +2,9 @@ const S3_BUCKET_NAME = 'asa-dev';
 const CONN_URL = process.env.CONN_URL ? process.env.CONN_URL : 'amqp://localhost:5672';
 const MONGO_URL = process.env.MONGO_URL ? process.env.MONGO_URL : 'mongodb://localhost:27017';
 
-// update as necessary
+// update as necessary (consider machine memory)
 const MAX_REQUEST_CONCURRENCY = 3;
+const MAX_FRAME_CONSTRUCTION_CONCURRENCY = 2;
 const MAX_WORKERS = 5;
 
 const IMAGE_SERVICE = 'image';
@@ -36,6 +37,7 @@ module.exports = {
     MAX_IMAGE_HEIGHT,
     MAX_WORKERS,
     MAX_REQUEST_CONCURRENCY,
+    MAX_FRAME_CONSTRUCTION_CONCURRENCY,
     S3_BUCKET_NAME,
     EXPIRE
 };

@@ -1,10 +1,67 @@
 const async = require('async');
 const axios = require('axios');
+const generateSingleImage = require('./generateSingleImage');
+const parsePayload = require('../utilities/parsePayload');
+const {MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
 
-// https://stackoverflow.com/questions/61690101/node-js-ffmpeg-creating-a-mp4-video-from-2-or-more-jpg-images
 
-// TODO: the below func should call generateBaseMap and generateLayerOverlays... so extract some logic from it
-// maybe wait for basemap and legend to be fetched and built before moving forward
+const generateSingleImageWrapper = async (payload, index, callback) => {
+
+    let image;
+    try {
+        image = await generateSingleImage(payload);
+        callback(null, {index, img: image});
+    } catch (err) {
+        callback(err);
+    }
+};
+
+const getAnimationFrames = async payload => {
+
+    const frameTimes = payload['data']['basemap']['map_times'];
+
+    return new Promise((resolve, reject) => {
+        const frames = {};
+
+        // create a queue object with concurrency 2
+        let q = async.queue(function(task, callback) {
+            const {name, action, payload, index} = task;
+            console.log(`task ${name}: ${index}`);
+
+            // call action and trigger callback on completion
+            action(payload, index, callback);
+        }, MAX_FRAME_CONSTRUCTION_CONCURRENCY);
+
+        // assign a callback
+        q.drain(function() {
+            console.log('all frames have been processed');
+            resolve(frames);
+        });
+
+        // assign an error callback
+        q.error(function(err, task) {
+            console.error('task experienced an error');
+            reject(err);
+        });
+
+        for (let i = 0; i < frameTimes.length; i++) {
+
+            let task = {
+                name: `building frame for map time: ${frameTimes[i]}`,
+                action: generateSingleImageWrapper,
+                payload: parsePayload(i, payload),
+                index: i
+            };
+
+            q.push(task, function (err, data) {
+                if (!err) {
+                    frames[data['index']] = data['img']
+                }
+            })
+        }
+    });
+
+};
 
 const generateAnimation = async payload => {
     // layers array has a length equal to the number of layers on the map being animated
@@ -19,13 +76,67 @@ const generateAnimation = async payload => {
     // maintainability and adoption it should do ONLY this. Other tasks are outside the scope of this
     // project and should have utilize a separate service.
 
-    // TODO: function -- assembleLayerData
-    // assemble packet of information needed to generate an individual image file
-    // this includes an array of datetimes and the other properties
 
-    //{layerParams: {...}, dateTimes: [...]}
+    // const mapTimes = payload['data']['basemap']['map_times'];
 
+    let frames;
+    try {
+        frames = await getAnimationFrames(payload);
+    } catch (err) {
+        console.log('failed to get generate animation frames');
+        throw err;
+    }
+
+    // TODO: need a fresh image on each cycle... seems like old layers are still on the new image
+
+    await frames[0].writeAsync(`output/${Date.now()}_test_1.png`);
+    await frames[1].writeAsync(`output/${Date.now()}_test_2.png`);
     console.log('hi');
-}
+    // TODO add buffered images to a readable stream and use fluent ffmpeg to convert to video
+
+    // preserve all buffered images in object
+    // return new Promise((resolve, reject) => {
+    //     const frames = {};
+    //
+    //     // create a queue object with concurrency 2
+    //     let q = async.queue(function(task, callback) {
+    //         const {name, action, payload, index} = task;
+    //         console.log(`task ${name}: ${index}`);
+    //
+    //         // call action and trigger callback on completion
+    //         action(payload, index, callback);
+    //     }, MAX_FRAME_CONSTRUCTION_CONCURRENCY);
+    //
+    //     // assign a callback
+    //     q.drain(function() {
+    //         console.log('all frames have been processed');
+    //         resolve(frames);
+    //     });
+    //
+    //     // assign an error callback
+    //     q.error(function(err, task) {
+    //         console.error('task experienced an error');
+    //         reject(err);
+    //     });
+    //
+    //     for (let i = 0; i < mapTimes.length; i++) {
+    //
+    //         let task = {
+    //             name: `building frame for map time: ${mapTimes[i]}`,
+    //             action: generateSingleImageWrapper,
+    //             payload: parsePayload(i, payload),
+    //             index: i
+    //         };
+    //
+    //         q.push(task, function (err, data) {
+    //             if (!err) {
+    //                 frames[data['index']] = data['img']
+    //             }
+    //         })
+    //     }
+    // });
+
+
+};
 
 module.exports = generateAnimation;
