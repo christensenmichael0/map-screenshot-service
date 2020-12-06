@@ -91,7 +91,8 @@ const generateSingleImage = async payload => {
         throw err;
     }
 
-    return outputImage;
+    // return outputImage;
+    return buffer;
 };
 
 
