@@ -1,20 +1,16 @@
 const buildBasemapCache = require('../utilities/buildBasemapCache');
 const buildLegendCache = require('../utilities/buildLegendCache');
 const buildLayers = require('../utilities/buildLayers');
-const {cleanupLayerParams} = require('../utilities/layer');
+const {buildLayerUrl, cleanupLayerParams} = require('../utilities/layer');
 const {assembleImageComponents, composeImage,
     resizeImage} = require('../utilities/image');
-const {putObject} = require('../services/aws');
 const {MAX_IMAGE_HEIGHT} = require('../config');
 
+const generateSingleImage = async payload => {
 
-const generateSingleImage = async layerInfo => {
-
-    // Note: data is an array of objects -- 1 object per layer
-    const {id, data} = layerInfo;
-    let {basemap_thumbnail: basemapUrl, zoom, use_bbox} = data[0];
-
-    let bbox = use_bbox.split(',').map(coord => Number(coord));
+    const {id, data} = payload;
+    let {url, zoom, bbox, params} = data['basemap'];
+    let basemapUrl = buildLayerUrl(url, params);
 
     // create basemap
     let basemapImage;
@@ -31,7 +27,7 @@ const generateSingleImage = async layerInfo => {
     // assemble all legends
     let legendImage;
     try {
-        legendImage = await buildLegendCache(layerArr, id);
+        legendImage = await buildLegendCache(layerArr);
     } catch (err) {
         console.log(err);
         throw err;
@@ -49,7 +45,7 @@ const generateSingleImage = async layerInfo => {
     // overlay data layers onto basemap
     let composedImage;
     try {
-        composedImage = await composeImage([dataImage, basemapImage])
+        composedImage = await composeImage([dataImage, basemapImage.clone()])
     } catch (err) {
         console.log(err);
         throw err;
@@ -86,14 +82,7 @@ const generateSingleImage = async layerInfo => {
         throw err;
     }
 
-    try {
-        await putObject(`${id}.${mimeType.split('/')[1]}`, buffer);
-    } catch (err) {
-        console.log(err);
-        throw err;
-    }
-
-    return outputImage;
+    return {key: `${id}.${mimeType.split('/')[1]}`, data: buffer}
 };
 
 

@@ -3,13 +3,6 @@ const {generateTiles} = require('./tile');
 const {getImageSeries, stitchImage, cropImage} = require('./image');
 
 
-// "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?"
-// "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GEBCO_LATEST&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&HEIGHT=256&WIDTH=256&TYPE=TileLayerWMS&ID=gebco&BBOX=-20037508.342789244,-20037508.342789244,20037508.342789244,20037508.342789244&srs=EPSG:3857
-
-const mockBaseMapUrl = "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GEBCO_LATEST&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&HEIGHT=256&WIDTH=256&TYPE=TileLayerWMS&ID=gebco&BBOX=__box__&srs=EPSG:3857";
-
-// https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GEBCO_LATEST&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&HEIGHT=256&WIDTH=256&TYPE=TileLayerWMS&ID=gebco&BBOX=-20037508.342789244,-20037508.342789244,20037508.342789244,20037508.342789244&srs=EPSG:3857
-
 const BBOX_REPLACE_STR = '__box__';
 const TILE_REPLACE_STR = 'z/x/y';
 
@@ -34,13 +27,14 @@ const usePacificMapStitch = bbox => {
  * @return {(boolean|void|string|*)[]}
  */
 const getBasemapTemplate = url => {
-    let bboxRegex = /(bbox=)([\d.-]+,[\d.-]+,[\d.-]+,[\d.-]+)/i;
+    let bboxRegex = /bbox=/i;
+
     let tileRegex = /\d+\/\d+\/\d+/i;
 
     let isBboxMatch = url.match(bboxRegex);
     let isTileMatch = url.match(tileRegex);
 
-    if (!!isBboxMatch) url = url.replace(isBboxMatch[2], BBOX_REPLACE_STR);
+    if (!!isBboxMatch) url = url.replace(isBboxMatch[0], `bbox=${BBOX_REPLACE_STR}`);
     if (!!isTileMatch) url = url.replace(isTileMatch[0], TILE_REPLACE_STR);
 
     return {splitOnTile: !!isBboxMatch, url};
@@ -83,14 +77,6 @@ const assembleBasemap = async (tiles, gridSize, zoom, bboxInfo, tileSize = 256) 
             counter++;
         }
     }
-
-    // wait for all images to be read
-    // let subImages = null;
-    // try {
-    //     subImages = await Promise.all(imageTiles);
-    // } catch (err) {
-    //     throw err;
-    // }
 
     // stitch tiles
     let stitchedImage;

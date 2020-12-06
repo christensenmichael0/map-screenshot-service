@@ -2,36 +2,39 @@ const {ddBBox2Meters} = require('./tile');
 
 /**
  *
- * @param layers
+ * @param data
  * @return {[]}
  */
-const cleanupLayerParams = layers => {
+const cleanupLayerParams = data => {
 
-    let removeParams = ['use_bbox', 'basemap_thumbnail', 'basemap_template', 'starttime',
-    'endtime', 'movieformat', 'eds_key', 'title', 'url', 'duration','zoom', 'map_time'];
+    let removeParams = ['title', 'url', 'valid_time'];
+
+    let {basemap, overlays} = data;
+    let mapTime = basemap['map_time'];
+    let bbox = basemap['bbox'];
 
     let output = [];
-    for (let indx in layers) {
+    for (let indx in overlays) {
 
-        let layer = layers[indx];
+        let layer = overlays[indx];
         let layerInfo = {};
 
         layerInfo['title'] = layer['title'];
-        layerInfo['mapTime'] = layer['map_time'];
-        layerInfo['validTime'] = layer['time'];
+        layerInfo['mapTime'] = mapTime;
+        layerInfo['validTime'] = layer['valid_time'];
         layerInfo['url'] = layer['url'];
 
+        layer['time'] = layerInfo['validTime'];
+
         // assume we are using only EPSG:3857 (may need to augment functionality in the future)
-        let bbox = layer['use_bbox'].split(',').map(coord => Number(coord));
         layer['bbox'] = ddBBox2Meters([bbox[0], bbox[2], bbox[1], bbox[3]]).join(',');
 
         removeParams.forEach(remove => {
             if (layer.hasOwnProperty(remove)) delete layer[remove];
         });
 
-        if (layer.hasOwnProperty('transparent')) {
-            layer['transparent'] = layer['transparent'] === 1 ? true : false;
-        }
+        // remove elevation if its an empty string
+        if (layer.hasOwnProperty('elevation') && !layer['elevation']) delete layer['elevation'];
 
         layerInfo['queryParams'] = layer;
         output.push(layerInfo);
@@ -61,8 +64,11 @@ const buildLayerUrl = (url, queryParams) => {
 const buildLegendUrl = (url, queryParams) => {
     let qp = JSON.parse(JSON.stringify(queryParams));
 
-    delete qp['width'];
-    delete qp['height'];
+    let removeParams = ['width', 'height', 'time', 'bbox'];
+
+    removeParams.forEach(remove => {
+        if (qp.hasOwnProperty(remove)) delete qp[remove];
+    });
 
     qp['request'] = 'GetLegendGraphic';
 
