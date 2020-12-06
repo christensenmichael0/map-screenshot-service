@@ -1,20 +1,19 @@
 const async = require('async');
 const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const stream = require('stream');
 const generateSingleImage = require('./generateSingleImage');
 const parsePayload = require('../utilities/parsePayload');
-const {MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
-
-const stream = require('stream');
-const ffmpeg = require('fluent-ffmpeg');
 const {putObject} = require('../services/aws');
 const pify = require('pify');
+const {MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
 
 const generateSingleImageWrapper = async (payload, index, callback) => {
 
-    let image;
+    let key, data;
     try {
-        image = await generateSingleImage(payload);
-        callback(null, {index, img: image});
+        ({key, data} = await generateSingleImage(payload));
+        callback(null, {index, img: data});
     } catch (err) {
         callback(err);
     }
@@ -96,7 +95,7 @@ const convertImagesToMovie = async (id, frames, fps = 1, format = 'mp4') => {
                 console.log(`ffmpeg image to movie failure: ${id} -- ${err.message}`);
                 reject(err);
             }).on('end', function() {
-                console.log(`ffmpeg image to movie success: ${id}`);
+                console.log(`ffmpeg successfully converted images to movie: ${id}`);
                 resolve(outputFilePath)
             }).save(outputFilePath);
     });
@@ -115,8 +114,10 @@ const generateAnimation = async payload => {
     // maintainability and adoption it should do ONLY this. Other tasks are outside the scope of this
     // project and should have utilize a separate service.
 
-    const {id} = payload;
+    const {id, data: _data} = payload;
+    const {format, fps} = _data['general'];
 
+    // get all image frames
     let frames;
     try {
         frames = await getAnimationFrames(payload);
@@ -125,32 +126,34 @@ const generateAnimation = async payload => {
         throw err;
     }
 
+    // convert image frames into a movie with specified format
     let movieFile;
     try {
-        movieFile = await convertImagesToMovie(id, frames, 1, 'mp4');
+        movieFile = await convertImagesToMovie(id, frames, fps, format);
     } catch (err) {
         console.log(err);
         throw err;
     }
 
+    // read the movie file into memory
+    let data, readError = false;
+    try {
+        data = await pify(fs.readFile)(movieFile);
+    } catch (err) {
+        readError = true;
+    }
 
-    fs.readFile(movieFile, async function(err, data) {
-        try {
-            await pify(fs.unlink)(movieFile);
-        } catch (err) {
-            console.log(`failed to delete local movie file: ${movieFile}`);
-        }
+    // always delete the local movie file
+    try {
+        await pify(fs.unlink)(movieFile);
+    } catch (err) {
+        console.log(`failed to delete local movie file: ${movieFile}`);
+    }
 
-        if (err) throw err;
+    // throw error if the file couldn't be read
+    if (readError) throw new Error(`failed to read movie file: ${movieFile}`);
 
-        try {
-            await putObject(`${id}.${'mp4'}`, data);
-            return data
-        } catch (err) {
-            console.log('failed to upload to s3');
-            throw err;
-        }
-    });
+    return {key: `${id}.${format}`, data}
 };
 
 module.exports = generateAnimation;

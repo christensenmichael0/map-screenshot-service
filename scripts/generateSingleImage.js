@@ -4,9 +4,7 @@ const buildLayers = require('../utilities/buildLayers');
 const {buildLayerUrl, cleanupLayerParams} = require('../utilities/layer');
 const {assembleImageComponents, composeImage,
     resizeImage} = require('../utilities/image');
-const {putObject} = require('../services/aws');
 const {MAX_IMAGE_HEIGHT} = require('../config');
-
 
 const generateSingleImage = async payload => {
 
@@ -29,7 +27,7 @@ const generateSingleImage = async payload => {
     // assemble all legends
     let legendImage;
     try {
-        legendImage = await buildLegendCache(layerArr, id);
+        legendImage = await buildLegendCache(layerArr);
     } catch (err) {
         console.log(err);
         throw err;
@@ -84,15 +82,7 @@ const generateSingleImage = async payload => {
         throw err;
     }
 
-    try {
-        await putObject(`${id}.${mimeType.split('/')[1]}`, buffer);
-    } catch (err) {
-        console.log(err);
-        throw err;
-    }
-
-    // return outputImage;
-    return buffer;
+    return {key: `${id}.${mimeType.split('/')[1]}`, data: buffer}
 };
 
 

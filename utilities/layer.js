@@ -64,10 +64,7 @@ const buildLayerUrl = (url, queryParams) => {
 const buildLegendUrl = (url, queryParams) => {
     let qp = JSON.parse(JSON.stringify(queryParams));
 
-    let removeParams = ['width', 'height', 'time'];
-    // delete qp['width'];
-    // delete qp['height'];
-    // delete qp['time'];
+    let removeParams = ['width', 'height', 'time', 'bbox'];
 
     removeParams.forEach(remove => {
         if (qp.hasOwnProperty(remove)) delete qp[remove];

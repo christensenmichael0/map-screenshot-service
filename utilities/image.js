@@ -221,7 +221,7 @@ const stackImages = async (images, padding = 10) => {
 
     let container = null;
     try  {
-        container = await createEmptyImage(maxWidth, maxHeight);
+        container = await createEmptyImage(maxWidth, totalHeight);
     } catch (err) {
         throw err;
     }
@@ -319,10 +319,10 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage, frame
 
     // map time is the same for all layers which comprise a single frame (validTime is not necessarily)
     let mapTime = dataLayers[0]['mapTime'];
-    container.print(font, outerMargin, 0, `Map Time - ${mapTime}${frameText}`);
+    container.print(font, outerMargin, outerMargin, `Map Time - ${mapTime}${frameText}`);
 
     for (let i = 0; i < dataLayers.length; i++) {
-        let yPos = outerMargin + (i * textHeight) + extraHeaderLines + headerTextPadding;
+        let yPos = outerMargin + (i * textHeight) + (extraHeaderLines * textHeight) + headerTextPadding;
         let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['validTime']})`;
 
         if (!layerTitle) continue;
@@ -332,7 +332,9 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage, frame
 
     // add base image
     let baseImageXPos = outerMargin;
-    let baseImageYPos = outerMargin + textHeight + extraMapPadding;
+    // let baseImageYPos = outerMargin + textHeight + extraMapPadding;
+    let baseImageYPos = outerMargin + headerHeight + extraMapPadding;
+
     container.composite(baseImage, baseImageXPos, baseImageYPos);
 
     // add legend image

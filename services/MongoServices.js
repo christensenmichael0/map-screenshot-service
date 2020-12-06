@@ -20,7 +20,7 @@ const JobStatusSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    location: {
+    objectKey: {
         type: String,
     },
     date: {
@@ -44,11 +44,12 @@ const JobStatusSchema = new mongoose.Schema({
 
 /**
  *
- * @param id
- * @param status
+ * @param id - native mongoDB identifier
+ * @param status - SUCCESS | FAILED | PENDING
+ * @param key - AWS S3 object key
  * @return {Promise<void>}
  */
-const updateJobStatus = async (id, status) => {
+const updateJobStatus = async (id, status, key) => {
 
     let job;
     try {
@@ -58,6 +59,7 @@ const updateJobStatus = async (id, status) => {
     }
 
     job.status = status;
+    job.objectKey = key;
     job.date = Date.now();
     job.save(function(err) {
         if (err) throw new Error('unable to update job status');
