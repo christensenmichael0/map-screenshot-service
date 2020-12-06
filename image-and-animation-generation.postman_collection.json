@@ -57,36 +57,6 @@
 			"response": []
 		},
 		{
-			"name": "IDL crossing gray base map",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "[{\n\t\"url\": \"http://10.107.89.147:8080/wms/\",\n\t\"layers\": \"ACCESS-G-SURFACE/u10:v10-group\",\n    \"zoom\": 3,\n\t\"transparent\": 1,\n\t\"format\": \"image/png\",\n\t\"styles\": \"barbs/div-RdYlBu-inv\",\n\t\"colorscalerange\": \"0,40\",\n\t\"autoscalerange\": \"false\",\n\t\"belowmincolor\": \"extend\",\n\t\"abovemaxcolor\": \"extend\",\n\t\"contourstepchange\": 0,\n\t\"numcolorbands\": 250,\n\t\"time\": \"2020-08-30T12:00:00Z\",\n    \"map_time\": \"2020-08-30T12:00:00Z\",\n\t\"title\": \"Surface Wind @ BoM ACCESS-G\",\n\t\"use_bbox\": \"85.6212615966797,-56.929240735738716,267.55485534667974,54.07631144981171\",\n\t\"width\": 1035,\n\t\"height\": 763,\n\t\"basemap_thumbnail\": \"https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/0/0/0\",\n\t\"version\": \"1.1.1\",\n\t\"request\": \"GetMap\",\n\t\"service\": \"WMS\",\n\t\"srs\": \"EPSG:3857\"\n}]",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5005/api/service/image",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5005",
-					"path": [
-						"api",
-						"service",
-						"image"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "download-image",
 			"request": {
 				"method": "GET",
