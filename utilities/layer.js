@@ -27,7 +27,7 @@ const cleanupLayerParams = data => {
         layer['time'] = layerInfo['validTime'];
 
         // assume we are using only EPSG:3857 (may need to augment functionality in the future)
-        layer['bbox'] = ddBBox2Meters([bbox[0], bbox[2], bbox[1], bbox[3]]).join(',');
+        layer['bbox'] = ddBBox2Meters(bbox).join(',');
 
         removeParams.forEach(remove => {
             if (layer.hasOwnProperty(remove)) delete layer[remove];

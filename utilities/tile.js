@@ -9,10 +9,10 @@ const METER_MAX = 20037508;
  * @return {number[]}
  */
 function ddBBox2Meters(bbox) {
-    let llCoord = globalMercator.lngLatToMeters([bbox[0], bbox[2]]);
-    let urCoord = globalMercator.lngLatToMeters([bbox[1], bbox[3]]);
+    let llCoord = globalMercator.lngLatToMeters([bbox[0], bbox[1]]);
+    let urCoord = globalMercator.lngLatToMeters([bbox[2], bbox[3]]);
 
-    return [llCoord[0], urCoord[0], llCoord[1], urCoord[1]];
+    return [llCoord[0], llCoord[1], urCoord[0], urCoord[1]];
 }
 
 /**

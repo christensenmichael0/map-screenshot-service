@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node app.js",
     "worker": "node worker.js",
-    "clustered:worker": "node clusteredWorker.js",
-    "start:dev": "run-p start worker",
-    "start:dev:clustered": "run-p start clustered:worker",
-    "prod": "node dist/api.bundle.js",
+    "app:worker": "wait-on tcp:5005 && node worker.js",
+    "clustered:worker": "wait-on tcp:5005 && node clusteredWorker.js",
+    "start:dev": "concurrently -c \"blue,magenta\" \"npm:start\" \"npm:app:worker\"",
+    "start:prod:clustered": "concurrently -c \"blue,magenta\" \"npm:start\" \"npm:clustered:worker\"",
     "eslint": "eslint ./",
     "eslint-fix": "eslint ./ --fix",
     "build": "webpack",
@@ -26,6 +26,7 @@
     "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "cluster": "^0.7.7",
+    "concurrently": "^5.3.0",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",
@@ -37,7 +38,8 @@
     "os": "^0.1.1",
     "path": "^0.12.7",
     "pify": "^5.0.0",
-    "stream": "0.0.2"
+    "stream": "0.0.2",
+    "wait-on": "^5.2.0"
   },
   "devDependencies": {
     "eslint": "^7.14.0",

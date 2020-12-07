@@ -1,4 +1,3 @@
-const Jimp = require('jimp');
 const {generateTiles} = require('./tile');
 const {getImageSeries, stitchImage, cropImage} = require('./image');
 
@@ -71,7 +70,6 @@ const assembleBasemap = async (tiles, gridSize, zoom, bboxInfo, tileSize = 256) 
     let imageTiles = [];
     for (let rowIndx = 0; rowIndx < gridSize[0]; rowIndx++) {
         for (let colIndx = 0; colIndx < gridSize[1]; colIndx++) {
-            // let image = Jimp.read(tiles[counter]);
             let image = tiles[counter];
             imageTiles.push(image);
             counter++;
