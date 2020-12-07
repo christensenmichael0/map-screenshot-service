@@ -10,42 +10,21 @@
 // for testing only
 // await image.writeAsync(`output/${Date.now()}_test.png`);
 
-// attempting to stream directly to AWS S3 without intermediate save on host... doesn't seem to work for mp4s (can't
-// perform seek on stdout
+// various package.json scripts
+"start": "node app.js",
+"worker": "node worker.js",
+"worker-test":"wait-on tcp:5005 && node worker.js",
+"clustered:worker": "node clusteredWorker.js",
+"start:dev": "run-p start worker",
+"start:dev:test": "concurrently -c \"blue,magenta\" \"npm:start\" \"npm:worker-test\"",
+"start:dev:clustered": "run-p start clustered:worker",
+"prod": "node dist/api.bundle.js",
+"eslint": "eslint ./",
+"eslint-fix": "eslint ./ --fix",
+"build": "webpack",
+"test": "echo \"Error: no test specified\" && exit 1"
 
-// https://stackoverflow.com/questions/59685461/upload-ffmpeg-file-output-to-aws-s3-using-nodejs
-
-    // let passThroughStream = new stream.PassThrough();
-
-    // .videoCodec('libx264')
-    // .fps(1).outputOptions(['-pix_fmt yuv420p', '-movflags empty_moov'])
-
-    // const command = ffmpeg()
-    //     .input(imagesStream)
-    //     .fps(1)
-    //     .format('mp4')
-    //     .output(passThroughStream, {end: true})
-    //     .outputOptions(['-pix_fmt yuv420p', '-movflags empty_moov'])
-    //     .on('error', function(err) {
-    //         console.log('An error occurred: ' + err.message);
-    //     }).on('end', function() {
-    //         console.log('Processing finished !');
-    //     }).run();
-    //
-    //     const bucketStreamParams = {
-    //         Bucket: 'asa-dev',
-    //         Key: 'the-big-test.mp4',
-    //         Body: passThroughStream
-    //     };
-    //
-    //     const AWS = require('aws-sdk');
-    //     const s3 = new AWS.S3({});
-    //
-    //     try {
-    //         const s3Response = await s3.upload(bucketStreamParams).promise();
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
+// some useful docker commands
 
 docker-compose -f docker-compose.local.yml up -d
 
