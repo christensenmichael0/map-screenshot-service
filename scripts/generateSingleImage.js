@@ -1,7 +1,7 @@
 const buildBasemapCache = require('../utilities/buildBasemapCache');
 const buildLegendCache = require('../utilities/buildLegendCache');
 const buildLayers = require('../utilities/buildLayers');
-const {buildLayerUrl, cleanupLayerParams} = require('../utilities/layer');
+const {buildLayerUrl, addMapTimeProp} = require('../utilities/layer');
 const {assembleImageComponents, composeImage,
     resizeImage} = require('../utilities/image');
 const {MAX_IMAGE_HEIGHT} = require('../config');
@@ -9,8 +9,10 @@ const {MAX_IMAGE_HEIGHT} = require('../config');
 const generateSingleImage = async payload => {
 
     const {id, data} = payload;
-    let {url, zoom, bbox, params} = data['basemap'];
+    let {url, zoom, bbox, params, map_time: mapTime} = data['basemap'];
     let basemapUrl = buildLayerUrl(url, params);
+
+    let layers = data['overlays'];
 
     // create basemap
     let basemapImage;
@@ -22,12 +24,14 @@ const generateSingleImage = async payload => {
     }
 
     //  cleanup query parameters
-    let layerArr = cleanupLayerParams(data);
+    // let layerArr = cleanupLayerParams(data);
+    layers = addMapTimeProp(layers, mapTime);
 
     // assemble all legends
     let legendImage;
     try {
-        legendImage = await buildLegendCache(layerArr);
+        let legendUrls = layers.map(layer => layer['legend']);
+        legendImage = await buildLegendCache(legendUrls);
     } catch (err) {
         console.log(err);
         throw err;
@@ -36,7 +40,8 @@ const generateSingleImage = async payload => {
     // assemble all data layers
     let dataImage;
     try {
-        dataImage = await buildLayers(layerArr);
+        let layerUrls = layers.map(layer => layer['url']);
+        dataImage = await buildLayers(layerUrls);
     } catch (err) {
         console.log(err);
         throw err;
@@ -65,7 +70,7 @@ const generateSingleImage = async payload => {
     // add headers and legends
     let outputImage;
     try {
-        outputImage = await assembleImageComponents(layerArr, resizedImage, legendImage);
+        outputImage = await assembleImageComponents(layers, resizedImage, legendImage);
     } catch (err) {
         console.log(err);
         throw err;

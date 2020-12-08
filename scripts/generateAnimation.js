@@ -4,10 +4,16 @@ const ffmpeg = require('fluent-ffmpeg');
 const stream = require('stream');
 const generateSingleImage = require('./generateSingleImage');
 const parsePayload = require('../utilities/parsePayload');
-const {putObject} = require('../services/aws');
 const pify = require('pify');
 const {MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
 
+/**
+ *
+ * @param payload
+ * @param index
+ * @param callback
+ * @return {Promise<void>}
+ */
 const generateSingleImageWrapper = async (payload, index, callback) => {
 
     let key, data;
@@ -19,8 +25,13 @@ const generateSingleImageWrapper = async (payload, index, callback) => {
     }
 };
 
+/**
+ *
+ * @param payload
+ * @return {Promise<unknown>}
+ */
 const getAnimationFrames = async payload => {
-    const frameTimes = payload['data']['basemap']['map_times'];
+    const frameTimes = payload['data']['basemap']['map_time'];
 
     return new Promise((resolve, reject) => {
         const frames = {};
@@ -64,10 +75,17 @@ const getAnimationFrames = async payload => {
     });
 };
 
+/**
+ *
+ * @param id
+ * @param frames
+ * @param fps
+ * @param format
+ * @return {Promise<unknown>}
+ */
 const convertImagesToMovie = async (id, frames, fps = 1, format = 'mp4') => {
 
     // TODO: need different workflows depending on format
-
     return new Promise((resolve, reject) => {
         // create a readable stream from all image buffers to feed fluent ffmpeg
         let imagesStream = new stream.PassThrough();
@@ -102,17 +120,6 @@ const convertImagesToMovie = async (id, frames, fps = 1, format = 'mp4') => {
 };
 
 const generateAnimation = async payload => {
-    // layers array has a length equal to the number of layers on the map being animated
-    // each layer object must contain a key: map_times which will be an array of times,
-    // additionally key: valid_times should be provided and container an array of times equal in length
-    // to the aforementioned map_times. Map times are a reflection the the timeslider ticks
-    // provided by the application UI. If more than 2 layers are being animated
-    // then each of these layers will contain the same value for map_times. The map_time is
-    // the frame time so it shouldn't change. The valid_times, however, could change. For any
-    // map time an individual layer will have its own valid time. All of this needs to be resolved
-    // outside of this service. The job of this service is to assemble WMS data and for future
-    // maintainability and adoption it should do ONLY this. Other tasks are outside the scope of this
-    // project and should have utilize a separate service.
 
     const {id, data: _data} = payload;
     const {format, fps} = _data['general'];

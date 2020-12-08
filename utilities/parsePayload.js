@@ -11,13 +11,12 @@ const parsePayload = (indx, payload) => {
     const {id, data} = payload;
     let output = JSON.parse(JSON.stringify(data));
 
-    output['basemap']['map_time'] = data['basemap']['map_times'][indx];
-    delete output['basemap']['map_times'];
+    output['basemap']['map_time'] = data['basemap']['map_time'][indx];
 
     // update valid_time in each overlay
     for (let i = 0; i < data['overlays'].length; i++) {
-        output['overlays'][i]['valid_time'] = data['overlays'][i]['valid_times'][indx];
-        delete output['overlays'][i]['valid_times'];
+        output['overlays'][i]['url'] = data['overlays'][i]['url'][indx];
+        output['overlays'][i]['labels'] = data['overlays'][i]['labels'][indx];
     }
 
     return {id, data: output};

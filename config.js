@@ -18,7 +18,7 @@ const FAILED = 'FAILED';
 const SUCCESS = 'SUCCESS';
 
 // max height of map image
-const MAX_IMAGE_HEIGHT = 800;
+const MAX_IMAGE_HEIGHT = 700;
 
 // cache expiration for job-specific basemap and legend images
 const EXPIRE = 300; // seconds
