@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"basemap\": {\n        \"bbox\": [85.6212615966797, -56.929240735738716, 267.55485534667974, 54.07631144981171],\n        \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n        \"params\": {\n            \"service\": \"WMS\",\n            \"request\": \"GetMap\",\n            \"version\": \"1.1.1\",\n            \"layers\": \"GEBCO_LATEST\",\n            \"styles\": \"\",\n            \"format\": \"image/png\",\n            \"transparent\": \"true\",\n            \"width\": 256,\n            \"height\": 256,\n            \"type\": \"TileLayerWMS\",\n            \"id\": \"GEBCO\",\n            \"srs\": \"EPSG:3857\",\n            \"bbox\": \"\"\n        },\n        \"map_time\": \"2020-08-30T12:00:00Z\",\n        \"zoom\": 3\n    },\n    \"overlays\": [{\n        \"url\": \"http://10.107.89.147:8080/wms/\",\n        \"layers\": \"ACCESS-G-SURFACE/u10:v10-group\",\n        \"transparent\": \"true\",\n        \"format\": \"image/png\",\n        \"styles\": \"barbs/div-RdYlBu-inv\",\n        \"colorscalerange\": \"0,40\",\n        \"autoscalerange\": \"false\",\n        \"belowmincolor\": \"extend\",\n        \"abovemaxcolor\": \"extend\",\n        \"contourstepchange\": 0,\n        \"numcolorbands\": 250,\n        \"valid_time\": \"2020-08-30T12:00:00Z\",\n        \"title\": \"Surface Wind @ BoM ACCESS-G\",\n        \"width\": 1035,\n        \"height\": 763,\n        \"version\": \"1.1.1\",\n        \"request\": \"GetMap\",\n        \"service\": \"WMS\",\n        \"srs\": \"EPSG:3857\",\n        \"elevation\": \"\"\n    }, {\n        \"url\": \"http://10.107.89.147:8080/wms/\",\n        \"layers\": \"AUSWAVE-R/sig_wav_ht\",\n        \"transparent\": \"true\",\n        \"format\": \"image/png\",\n        \"styles\": \"raster/METOC\",\n        \"colorscalerange\": \"0,15\",\n        \"autoscalerange\": \"false\",\n        \"belowmincolor\": \"extend\",\n        \"abovemaxcolor\": \"extend\",\n        \"contourstepchange\": 0,\n        \"numcolorbands\": 250,\n        \"valid_time\": \"2020-08-30T12:00:00Z\",\n        \"title\": \"Significant Wave Height @ BoM AUSWAVE-R\",\n        \"width\": 1035,\n        \"height\": 763,\n        \"version\": \"1.1.1\",\n        \"request\": \"GetMap\",\n        \"service\": \"WMS\",\n        \"srs\": \"EPSG:3857\",\n        \"elevation\": \"\"\n    }]\n}",
+					"raw": "{\n    \"basemap\": {\n        \"bbox\": [110.45671261725397, -24.82486610764586, 117.72803527926015, -19.335000198780286],\n        \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n        \"params\": {\n            \"service\": \"WMS\",\n            \"request\": \"GetMap\",\n            \"version\": \"1.1.1\",\n            \"layers\": \"GEBCO_LATEST\",\n            \"styles\": \"\",\n            \"format\": \"image/png\",\n            \"transparent\": \"true\",\n            \"width\": 256,\n            \"height\": 256,\n            \"type\": \"TileLayerWMS\",\n            \"id\": \"GEBCO\",\n            \"srs\": \"EPSG:3857\",\n            \"bbox\": \"\"\n        },\n        \"map_time\": \"2020-08-30T12:00:00Z\",\n        \"zoom\": 7.5\n    },\n    \"overlays\": [{\n        \"title\": \"Winds\",\n        \"url\": \"http://10.107.89.147:8080/wms/?service=WMS&request=GetMap&version=1.1.1&layers=ACCESS-G-SURFACE%2Fu10%3Av10-group&styles=barbs%2Fdiv-RdYlBu-inv&format=image%2Fpng&transparent=true&colorscalerange=0%2C40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&time=2020-08-30T12%3A00%3A00Z&exceptions=application%2Fvnd.ogc.se_xml&width=936&height=763&srs=EPSG%3A3857&bbox=12295599.903121801%2C-2854113.531417438%2C13105039.83924992%2C-2194281.617671973\",\n        \"isTileLayer\": \"false\",\n        \"labels\": [{\n            \"key\": \"valid time\",\n            \"value\": \"2020-08-30T12:00:00Z\",\n            \"showKey\": \"true\"\n        }],\n        \"legend\": \"http://10.107.89.147:8080/wms/?REQUEST=GetLegendGraphic&VERSION=1.1.1&LAYERS=ACCESS-G-SURFACE%2Fu10%3Av10-group&STYLES=barbs%2Fdiv-RdYlBu-inv&FORMAT=image%2Fpng&TRANSPARENT=true&COLORSCALERANGE=0%2C40&AUTOSCALERANGE=false&BELOWMINCOLOR=extend&ABOVEMAXCOLOR=extend&CONTOURSTEPCHANGE=0&NUMCOLORBANDS=250&TIME=2020-08-30T12%3A00%3A00Z&SRS=EPSG%3A3857&BBOX=12295599.903121801%2C-2854113.531417438%2C13105039.83924992%2C-2194281.617671973\"\n    }, {\n        \"title\": \"Waves\",\n        \"url\": \"http://10.107.89.147:8080/wms/?service=WMS&request=GetMap&version=1.1.1&layers=AUSWAVE-G%2Fsig_wav_ht&styles=raster%2FMETOC&format=image%2Fpng&transparent=true&colorscalerange=0%2C15&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&time=2020-08-30T12%3A00%3A00Z&exceptions=application%2Fvnd.ogc.se_xml&width=936&height=763&srs=EPSG%3A3857&bbox=12295599.903121801%2C-2854113.531417438%2C13105039.83924992%2C-2194281.617671973\",\n        \"isTileLayer\": \"false\",\n        \"labels\": [{\n            \"key\": \"valid time\",\n            \"value\": \"2020-08-30T12:00:00Z\",\n            \"showKey\": \"true\"\n        }],\n        \"legend\": \"http://10.107.89.147:8080/wms/?REQUEST=GetLegendGraphic&VERSION=1.1.1&LAYERS=AUSWAVE-G%2Fsig_wav_ht&STYLES=raster%2FMETOC&FORMAT=image%2Fpng&TRANSPARENT=true&COLORSCALERANGE=0%2C15&AUTOSCALERANGE=false&BELOWMINCOLOR=extend&ABOVEMAXCOLOR=extend&CONTOURSTEPCHANGE=0&NUMCOLORBANDS=250&TIME=2020-08-30T12%3A00%3A00Z&ELEVATION=null&SRS=EPSG%3A3857&BBOX=12295599.903121801%2C-2854113.531417438%2C13105039.83924992%2C-2194281.617671973\"\n    }]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -78,13 +78,73 @@
 			"response": []
 		},
 		{
+			"name": "IDL crossing",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"basemap\": {\n        \"bbox\": [85.6212615966797,-56.929240735738716,267.55485534667974,54.07631144981171],\n        \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n        \"params\": {\n            \"service\": \"WMS\",\n            \"request\": \"GetMap\",\n            \"version\": \"1.1.1\",\n            \"layers\": \"GEBCO_LATEST\",\n            \"styles\": \"\",\n            \"format\": \"image/png\",\n            \"transparent\": \"true\",\n            \"width\": 256,\n            \"height\": 256,\n            \"type\": \"TileLayerWMS\",\n            \"id\": \"GEBCO\",\n            \"srs\": \"EPSG:3857\",\n            \"bbox\": \"\"\n        },\n        \"map_time\": \"2020-08-30T12:00:00Z\",\n        \"zoom\": 3\n    },\n    \"overlays\": [{\n        \"title\": \"Surface Wind @ BoM ACCESS-G\",\n        \"url\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T12:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\",\n        \"isTileLayer\": \"false\",\n        \"labels\": [{\n                \"key\": \"valid time\",\n                \"value\": \"2020-08-30T12:00:00Z\",\n                \"showKey\": \"true\"\n            }],\n        \"legend\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&version=1.1.1&request=GetLegendGraphic&service=WMS&srs=EPSG:3857\"\n    }]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5005/api/service/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5005",
+					"path": [
+						"api",
+						"service",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "single-layer-image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"basemap\": {\n\t\t\"bbox\": [110.45671261725397, -24.82486610764586, 117.72803527926015, -19.335000198780286],\n\t\t\"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n\t\t\"params\": {\n\t\t\t\"service\": \"WMS\",\n\t\t\t\"request\": \"GetMap\",\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"layers\": \"GEBCO_LATEST\",\n\t\t\t\"styles\": \"\",\n\t\t\t\"format\": \"image/png\",\n\t\t\t\"transparent\": \"true\",\n\t\t\t\"width\": 256,\n\t\t\t\"height\": 256,\n\t\t\t\"type\": \"TileLayerWMS\",\n\t\t\t\"id\": \"GEBCO\",\n\t\t\t\"srs\": \"EPSG:3857\",\n\t\t\t\"bbox\": \"\"\n\t\t},\n\t\t\"map_time\": \"2020-08-30T18:00:00Z\",\n\t\t\"zoom\": 7.5\n\t},\n\t\"overlays\": [{\n        \"title\": \"Surface Wind @ BoM ACCESS-G\",\n\t\t\"url\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T18:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\",\n\t\t\"isTileLayer\": \"false\",\n\t\t\"labels\": [{\n\t\t\t\t\"key\": \"valid time\",\n\t\t\t\t\"value\": \"2020-08-30T18:00:00Z\",\n\t\t\t\t\"showKey\": \"true\"\n\t\t\t}],\n\t\t\"legend\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&version=1.1.1&request=GetLegendGraphic&service=WMS&srs=EPSG:3857\"\n\t}]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5005/api/service/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5005",
+					"path": [
+						"api",
+						"service",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "animation-generation",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"general\": {\n    \"format\": \"mp4\",\n    \"fps\": 1\n  },\n  \"basemap\": {\n    \"bbox\": [85.6212615966797,-56.929240735738716,267.55485534667974,54.07631144981171],\n    \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n    \"params\": {\n        \"service\": \"WMS\",\n        \"request\": \"GetMap\",\n        \"version\": \"1.1.1\",\n        \"layers\": \"GEBCO_LATEST\",\n        \"styles\": \"\",\n        \"format\": \"image/png\",\n        \"transparent\": \"true\",\n        \"width\": 256,\n        \"height\": 256,\n        \"type\": \"TileLayerWMS\",\n        \"id\": \"GEBCO\",\n        \"srs\": \"EPSG:3857\",\n        \"bbox\": \"\"\n    },\n    \"map_times\": [\"2020-08-30T12:00:00Z\", \"2020-08-30T18:00:00Z\"],\n    \"zoom\": 3\n  },\n  \"overlays\": [{\n    \"url\": \"http://10.107.89.147:8080/wms/\",\n    \"layers\": \"ACCESS-G-SURFACE/u10:v10-group\",\n    \"transparent\": \"true\",\n    \"format\": \"image/png\",\n    \"styles\": \"barbs/div-RdYlBu-inv\",\n    \"colorscalerange\": \"0,40\",\n    \"autoscalerange\": \"false\",\n    \"belowmincolor\": \"extend\",\n    \"abovemaxcolor\": \"extend\",\n    \"contourstepchange\": 0,\n    \"numcolorbands\": 250,\n    \"valid_times\": [\"2020-08-30T12:00:00Z\", \"2020-08-30T18:00:00Z\"],\n    \"title\": \"Surface Wind @ BoM ACCESS-G\",\n    \"width\": 1035,\n    \"height\": 763,\n    \"version\": \"1.1.1\",\n    \"request\": \"GetMap\",\n    \"service\": \"WMS\",\n    \"srs\": \"EPSG:3857\",\n    \"elevation\": \"\"\n  }]\n}",
+					"raw": "{\n\t\"general\": {\n\t\t\"format\": \"mp4\",\n\t\t\"fps\": 1\n\t},\n\t\"basemap\": {\n\t\t\"bbox\": [110.45671261725397, -24.82486610764586, 117.72803527926015, -19.335000198780286],\n\t\t\"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n\t\t\"params\": {\n\t\t\t\"service\": \"WMS\",\n\t\t\t\"request\": \"GetMap\",\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"layers\": \"GEBCO_LATEST\",\n\t\t\t\"styles\": \"\",\n\t\t\t\"format\": \"image/png\",\n\t\t\t\"transparent\": \"true\",\n\t\t\t\"width\": 256,\n\t\t\t\"height\": 256,\n\t\t\t\"type\": \"TileLayerWMS\",\n\t\t\t\"id\": \"GEBCO\",\n\t\t\t\"srs\": \"EPSG:3857\",\n\t\t\t\"bbox\": \"\"\n\t\t},\n\t\t\"map_time\": [\"2020-08-30T12:00:00Z\", \"2020-08-30T18:00:00Z\"],\n\t\t\"zoom\": 7.5\n\t},\n\t\"overlays\": [{\n\t\t\"title\": \"Surface Wind @ BoM ACCESS-G\",\n\t\t\"url\": [\"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T12:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\", \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T18:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\"],\n\t\t\"isTileLayer\": \"false\",\n\t\t\"labels\": [\n\t\t\t[{\n\t\t\t\t\"key\": \"valid time\",\n\t\t\t\t\"value\": \"2020-08-30T12:00:00Z\",\n\t\t\t\t\"showKey\": \"true\"\n\t\t\t}],\n\t\t\t[{\n\t\t\t\t\"key\": \"valid time\",\n\t\t\t\t\"value\": \"2020-08-30T18:00:00Z\",\n\t\t\t\t\"showKey\": \"true\"\n\t\t\t}]\n\t\t],\n\t\t\"legend\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&version=1.1.1&request=GetLegendGraphic&service=WMS&srs=EPSG:3857\"\n\t}]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -102,66 +162,6 @@
 						"api",
 						"service",
 						"animation"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "IDL crossing",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"basemap\": {\n    \"bbox\": [85.6212615966797,-56.929240735738716,267.55485534667974,54.07631144981171],\n    \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n    \"params\": {\n        \"service\": \"WMS\",\n        \"request\": \"GetMap\",\n        \"version\": \"1.1.1\",\n        \"layers\": \"GEBCO_LATEST\",\n        \"styles\": \"\",\n        \"format\": \"image/png\",\n        \"transparent\": \"true\",\n        \"width\": 256,\n        \"height\": 256,\n        \"type\": \"TileLayerWMS\",\n        \"id\": \"GEBCO\",\n        \"srs\": \"EPSG:3857\",\n        \"bbox\": \"\"\n    },\n    \"map_time\": \"2020-08-30T12:00:00Z\",\n    \"zoom\": 3\n  },\n  \"overlays\": [{\n    \"url\": \"http://10.107.89.147:8080/wms/\",\n    \"layers\": \"ACCESS-G-SURFACE/u10:v10-group\",\n    \"transparent\": \"true\",\n    \"format\": \"image/png\",\n    \"styles\": \"barbs/div-RdYlBu-inv\",\n    \"colorscalerange\": \"0,40\",\n    \"autoscalerange\": \"false\",\n    \"belowmincolor\": \"extend\",\n    \"abovemaxcolor\": \"extend\",\n    \"contourstepchange\": 0,\n    \"numcolorbands\": 250,\n    \"valid_time\": \"2020-08-30T12:00:00Z\",\n    \"title\": \"Surface Wind @ BoM ACCESS-G\",\n    \"width\": 1035,\n    \"height\": 763,\n    \"version\": \"1.1.1\",\n    \"request\": \"GetMap\",\n    \"service\": \"WMS\",\n    \"srs\": \"EPSG:3857\",\n    \"elevation\": \"\"\n  }]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5005/api/service/image",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5005",
-					"path": [
-						"api",
-						"service",
-						"image"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Single Layer Image",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"basemap\": {\n    \"bbox\": [110.45671261725397,-24.82486610764586,117.72803527926015,-19.335000198780286],\n    \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n    \"params\": {\n        \"service\": \"WMS\",\n        \"request\": \"GetMap\",\n        \"version\": \"1.1.1\",\n        \"layers\": \"GEBCO_LATEST\",\n        \"styles\": \"\",\n        \"format\": \"image/png\",\n        \"transparent\": \"true\",\n        \"width\": 256,\n        \"height\": 256,\n        \"type\": \"TileLayerWMS\",\n        \"id\": \"GEBCO\",\n        \"srs\": \"EPSG:3857\",\n        \"bbox\": \"\"\n    },\n    \"map_time\": \"2020-08-30T12:00:00Z\",\n    \"zoom\": 7.5\n  },\n  \"overlays\": [{\n    \"url\": \"http://10.107.89.147:8080/wms/\",\n    \"layers\": \"ACCESS-G-SURFACE/u10:v10-group\",\n    \"transparent\": \"true\",\n    \"format\": \"image/png\",\n    \"styles\": \"barbs/div-RdYlBu-inv\",\n    \"colorscalerange\": \"0,40\",\n    \"autoscalerange\": \"false\",\n    \"belowmincolor\": \"extend\",\n    \"abovemaxcolor\": \"extend\",\n    \"contourstepchange\": 0,\n    \"numcolorbands\": 250,\n    \"valid_time\": \"2020-08-30T12:00:00Z\",\n    \"title\": \"Surface Wind @ BoM ACCESS-G\",\n    \"width\": 936,\n    \"height\": 763,\n    \"version\": \"1.1.1\",\n    \"request\": \"GetMap\",\n    \"service\": \"WMS\",\n    \"srs\": \"EPSG:3857\",\n    \"elevation\": \"\"\n  }]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5005/api/service/image",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5005",
-					"path": [
-						"api",
-						"service",
-						"image"
 					]
 				}
 			},

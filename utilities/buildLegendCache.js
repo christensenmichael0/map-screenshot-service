@@ -6,15 +6,15 @@ const cache = {};
 /**
  * Batching and caching with Promises. Reuse legend when possible for a given job.
  *
- * @param layerArr
+ * @param legendUrls
  * @param jobId
  * @return {Promise<*>}
  */
-const buildLegendCache = async (layerArr, jobId) => {
+const buildLegendCache = async (legendUrls, jobId) => {
     if (cache[jobId]) return cache[jobId];
 
     try {
-        cache[jobId] = await buildLegend(layerArr);
+        cache[jobId] = await buildLegend(legendUrls);
         setTimeout(() => {delete cache[jobId]}, EXPIRE * 1000);
     } catch (err) {
         delete cache[jobId];

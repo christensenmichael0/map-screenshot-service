@@ -2,6 +2,7 @@ const axios = require('axios');
 const async = require('async');
 const Jimp = require('jimp');
 const {lngLat2Px, xMaxPixel} = require('./tile');
+const {buildLayerLabel} = require('./layer');
 const {MAX_REQUEST_CONCURRENCY} = require('../config');
 
 /**
@@ -323,7 +324,8 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage, frame
 
     for (let i = 0; i < dataLayers.length; i++) {
         let yPos = outerMargin + (i * textHeight) + (extraHeaderLines * textHeight) + headerTextPadding;
-        let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['validTime']})`;
+        // let layerTitle = `${dataLayers[i]['title']} (valid: ${dataLayers[i]['validTime']})`;
+        let layerTitle = `${dataLayers[i]['title']} (${buildLayerLabel(dataLayers[i]['labels'])})`;
 
         if (!layerTitle) continue;
 

@@ -1,5 +1,6 @@
 const {buildLayerUrl} = require('./layer');
 const {composeImage, getImageSeries} = require('./image');
+const {getQueryParams} = require('./layer');
 
 
 /**
@@ -32,24 +33,14 @@ const assembleLayers = async images => {
     return composedImage;
 };
 
-const buildLayers = async layerArr => {
+const buildLayers = async layerUrls => {
 
-    // fetch each tile, stitch, then crop and return image as binary blob
-    let imageUrls = [];
-    for (let i = 0; i < layerArr.length; i++) {
-        let {url, queryParams} = layerArr[i];
-        let imageUrl = buildLayerUrl(url, queryParams);
-
-        imageUrls.push(imageUrl);
-    }
-
-    // TODO: add some error handling if these params arent available
-    let fallbackDims = [layerArr[0]['queryParams']['width'],
-        layerArr[0]['queryParams']['height']];
+    let {width, height} = getQueryParams(layerUrls[0],['width', 'height']);
+    let fallbackDims = [width, height];
 
     let layerImages;
     try {
-        layerImages = await getImageSeries(imageUrls, fallbackDims);
+        layerImages = await getImageSeries(layerUrls, fallbackDims);
     } catch (err) {
         console.log(err);
         throw err;

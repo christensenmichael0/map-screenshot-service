@@ -1,20 +1,15 @@
-const {buildLegendUrl} = require('./layer');
 const {stackImages, getImageSeries} = require('./image');
 
-
-const buildLegend = async layerArr => {
-
-    let imageUrls = [];
-    for (let i = 0; i < layerArr.length; i++) {
-        let {url, queryParams} = layerArr[i];
-        let imageUrl = buildLegendUrl(url, queryParams);
-
-        imageUrls.push(imageUrl);
-    }
+/**
+ *
+ * @param legendUrls
+ * @return {Promise<*>}
+ */
+const buildLegend = async legendUrls => {
 
     let legendImages;
     try {
-        legendImages = await getImageSeries(imageUrls, [0,0]);
+        legendImages = await getImageSeries(legendUrls, [0,0]);
     } catch (err) {
         console.log(err);
         throw err;

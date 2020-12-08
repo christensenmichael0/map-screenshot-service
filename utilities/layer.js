@@ -1,47 +1,31 @@
+const queryString = require('query-string');
 const {ddBBox2Meters} = require('./tile');
 
 /**
  *
- * @param data
- * @return {[]}
+ * @param layers
+ * @param mapTime
+ * @return {*}
  */
-const cleanupLayerParams = data => {
+const addMapTimeProp = (layers, mapTime) => {
+    return layers.map(layer => {
+        layer['mapTime'] = mapTime;
+        return layer;
+    });
+};
 
-    let removeParams = ['title', 'url', 'valid_time'];
+const buildLayerLabel = attributes => {
 
-    let {basemap, overlays} = data;
-    let mapTime = basemap['map_time'];
-    let bbox = basemap['bbox'];
-
-    let output = [];
-    for (let indx in overlays) {
-
-        let layer = overlays[indx];
-        let layerInfo = {};
-
-        layerInfo['title'] = layer['title'];
-        layerInfo['mapTime'] = mapTime;
-        layerInfo['validTime'] = layer['valid_time'];
-        layerInfo['url'] = layer['url'];
-
-        layer['time'] = layerInfo['validTime'];
-
-        // assume we are using only EPSG:3857 (may need to augment functionality in the future)
-        layer['bbox'] = ddBBox2Meters(bbox).join(',');
-
-        removeParams.forEach(remove => {
-            if (layer.hasOwnProperty(remove)) delete layer[remove];
-        });
-
-        // remove elevation if its an empty string
-        if (layer.hasOwnProperty('elevation') && !layer['elevation']) delete layer['elevation'];
-
-        layerInfo['queryParams'] = layer;
-        output.push(layerInfo);
+    let outputStr = '';
+    for (let attr of attributes) {
+        if (attr['showKey']) {
+            outputStr = outputStr += `${attr['key']}: ${attr['value']} `;
+        }
     }
 
-    return output;
+    return outputStr.trim();
 };
+
 
 /**
  *
@@ -77,9 +61,29 @@ const buildLegendUrl = (url, queryParams) => {
 };
 
 
+/**
+ *
+ * @param url
+ * @param params
+ * @return {{}}
+ */
+const getQueryParams = (url, params = []) => {
+    let qp = queryString.parse(url);
+    let output = {};
+
+    for (let param of params) {
+        output[param] = qp[param];
+    }
+
+    return output;
+};
+
+
 
 module.exports = {
     buildLayerUrl,
     buildLegendUrl,
-    cleanupLayerParams
+    getQueryParams,
+    addMapTimeProp,
+    buildLayerLabel
 };
