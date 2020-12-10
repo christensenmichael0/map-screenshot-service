@@ -28,4 +28,8 @@
 
 docker-compose -f docker-compose.local.yml up -d
 
-docker build -t screenshot-service:latest .
+docker build -t screenshot-service:ffmpeg .
+
+
+docker run -it 4ec780ad3e45 /bin/sh
+ffmpeg -version

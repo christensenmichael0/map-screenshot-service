@@ -17,4 +17,6 @@ COPY ./ .
 EXPOSE 5005
 
 # command to run when intantiate an image
+
+# CMD ["npm","run","start:dev"]
 CMD ["npm","run","start:prod:clustered"]

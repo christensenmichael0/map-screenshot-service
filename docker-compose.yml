@@ -12,7 +12,7 @@ services:
       - 15671:15671
       - 15672:15672
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      test: rabbitmq-diagnostics -q ping
       interval: 5s
       timeout: 15s
       retries: 5
@@ -37,8 +37,10 @@ services:
       - rabbitmq
       - mongo
     environment:
-      - CONN_URL=amqp://rabbitmq
+      - CONN_URL=amqp://rabbitmq:5672
       - MONGO_URL=mongodb://mongo:27017
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
     restart: on-failure
     ports:
       - 5005:5005

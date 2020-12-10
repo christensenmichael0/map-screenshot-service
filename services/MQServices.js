@@ -1,9 +1,13 @@
 const amqp = require('amqplib/callback_api');
-const CONN_URL = require('../config');
+const {CONN_URL} = require('../config');
 
 let ch = null;
 
 amqp.connect(CONN_URL, (err, conn) => {
+    if (err) {
+        return console.log('failed to establish rabbitMQ connection!')
+    }
+    console.log('*** THE MASTER IS CONNECTED!');
     conn.createChannel((err,channel) => {
         ch = channel
     })

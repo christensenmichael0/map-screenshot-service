@@ -9,6 +9,7 @@ const {IMAGE_QUEUE, ANIMATION_QUEUE, CONN_URL,
 let channel, imageQueue, animationQueue;
 
 amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {
+    console.log('*** THE WORKER IS CONNECTED!');
         channel = ch;
         return channel.assertQueue(IMAGE_QUEUE);
     }).then(q => {
