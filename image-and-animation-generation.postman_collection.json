@@ -41,7 +41,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5005/api/job_status/5fbd17de4dbcf21853893bf2",
+					"raw": "http://localhost:5005/api/job-status/5fd3dd6691c52b8179c73051",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -49,8 +49,8 @@
 					"port": "5005",
 					"path": [
 						"api",
-						"job_status",
-						"5fbd17de4dbcf21853893bf2"
+						"job-status",
+						"5fd3dd6691c52b8179c73051"
 					]
 				}
 			},
@@ -62,7 +62,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5005/api/download/5fbd6c295e9f9221b04c159e",
+					"raw": "http://localhost:5005/api/download/5fd3dd6691c52b8179c73051",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -71,7 +71,7 @@
 					"path": [
 						"api",
 						"download",
-						"5fbd6c295e9f9221b04c159e"
+						"5fd3dd6691c52b8179c73051"
 					]
 				}
 			},
@@ -144,7 +144,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"general\": {\n\t\t\"format\": \"mp4\",\n\t\t\"fps\": 1\n\t},\n\t\"basemap\": {\n\t\t\"bbox\": [110.45671261725397, -24.82486610764586, 117.72803527926015, -19.335000198780286],\n\t\t\"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n\t\t\"params\": {\n\t\t\t\"service\": \"WMS\",\n\t\t\t\"request\": \"GetMap\",\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"layers\": \"GEBCO_LATEST\",\n\t\t\t\"styles\": \"\",\n\t\t\t\"format\": \"image/png\",\n\t\t\t\"transparent\": \"true\",\n\t\t\t\"width\": 256,\n\t\t\t\"height\": 256,\n\t\t\t\"type\": \"TileLayerWMS\",\n\t\t\t\"id\": \"GEBCO\",\n\t\t\t\"srs\": \"EPSG:3857\",\n\t\t\t\"bbox\": \"\"\n\t\t},\n\t\t\"map_time\": [\"2020-08-30T12:00:00Z\", \"2020-08-30T18:00:00Z\"],\n\t\t\"zoom\": 7.5\n\t},\n\t\"overlays\": [{\n\t\t\"title\": \"Surface Wind @ BoM ACCESS-G\",\n\t\t\"url\": [\"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T12:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\", \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T18:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\"],\n\t\t\"isTileLayer\": \"false\",\n\t\t\"labels\": [\n\t\t\t[{\n\t\t\t\t\"key\": \"valid time\",\n\t\t\t\t\"value\": \"2020-08-30T12:00:00Z\",\n\t\t\t\t\"showKey\": \"true\"\n\t\t\t}],\n\t\t\t[{\n\t\t\t\t\"key\": \"valid time\",\n\t\t\t\t\"value\": \"2020-08-30T18:00:00Z\",\n\t\t\t\t\"showKey\": \"true\"\n\t\t\t}]\n\t\t],\n\t\t\"legend\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&version=1.1.1&request=GetLegendGraphic&service=WMS&srs=EPSG:3857\"\n\t}]\n}",
+					"raw": "{\n    \"general\": {\n        \"format\": \"mp4\",\n        \"fps\": 1\n    },\n    \"basemap\": {\n        \"bbox\": [110.45671261725397, -24.82486610764586, 117.72803527926015, -19.335000198780286],\n        \"url\": \"https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv\",\n        \"params\": {\n            \"service\": \"WMS\",\n            \"request\": \"GetMap\",\n            \"version\": \"1.1.1\",\n            \"layers\": \"GEBCO_LATEST\",\n            \"styles\": \"\",\n            \"format\": \"image/png\",\n            \"transparent\": \"true\",\n            \"width\": 256,\n            \"height\": 256,\n            \"type\": \"TileLayerWMS\",\n            \"id\": \"GEBCO\",\n            \"srs\": \"EPSG:3857\",\n            \"bbox\": \"\"\n        },\n        \"map_time\": [\"2020-08-30T12:00:00Z\", \"2020-08-30T18:00:00Z\",\"2020-08-31T00:00:00Z\"],\n        \"zoom\": 7.5\n    },\n    \"overlays\": [{\n        \"title\": \"Surface Wind @ BoM ACCESS-G\",\n        \"url\": [\"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T12:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\", \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-30T18:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\",\"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&width=1035&height=763&version=1.1.1&request=GetMap&service=WMS&srs=EPSG:3857&time=2020-08-31T00:00:00Z&bbox=9531315.2,-7745669.8,-10290946.4,7184622\"],\n        \"isTileLayer\": \"false\",\n        \"labels\": [\n            [{\n                \"key\": \"valid time\",\n                \"value\": \"2020-08-30T12:00:00Z\",\n                \"showKey\": \"true\"\n            }],\n            [{\n                \"key\": \"valid time\",\n                \"value\": \"2020-08-30T18:00:00Z\",\n                \"showKey\": \"true\"\n            }],[{\n                \"key\": \"valid time\",\n                \"value\": \"2020-08-31T00:00:00Z\",\n                \"showKey\": \"true\"\n            }]\n        ],\n        \"legend\": \"http://10.107.89.147:8080/wms/?layers=ACCESS-G-SURFACE/u10:v10-group&transparent=true&format=image/png&styles=barbs/div-RdYlBu-inv&colorscalerange=0,40&autoscalerange=false&belowmincolor=extend&abovemaxcolor=extend&contourstepchange=0&numcolorbands=250&version=1.1.1&request=GetLegendGraphic&service=WMS&srs=EPSG:3857\"\n    }]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
