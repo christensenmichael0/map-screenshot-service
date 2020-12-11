@@ -15,7 +15,9 @@ amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {
         imageQueue = q.queue;
         consume(imageQueue);
     }
-);
+).catch(err => {
+    process.exit();
+});
 
 amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {
     channel = ch;
@@ -24,7 +26,9 @@ amqp.connect(CONN_URL).then(conn => conn.createChannel()).then(ch => {
         animationQueue = q.queue;
         consume(animationQueue);
     }
-);
+).catch(err => {
+    process.exit();
+});
 
 function consume(queue) {
     channel.consume(queue, async msg => {

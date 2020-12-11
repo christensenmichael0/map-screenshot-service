@@ -40,15 +40,20 @@ Install dependencies:
 npm install
 ```
 
-Start rabbitMQ and mongoDB services:
+Start rabbitMQ and mongoDB services first:<br>
 ```
 docker-compose -f docker-compose.local.yml up --build -d
 ```
 
-Run app and workers (single or clustered):
+Run app and worker (start server and a single worker):
 ```
 npm run start:dev
-npm run start:dev:clustered
+```
+
+alternatively (start server and worker separately - the server must be started before the worker):<br>
+```
+npm run start
+npm run worker
 ```
 
 * In production use a cluster of workers.
@@ -59,7 +64,7 @@ docker-compose up --build -d
 ```
 
 * The project is setup to use AWS credentials from the host machine. Credentials should not be included anywhere in
-this project to follow good practices. Certain upload operations will likely fail when running this app with Docker.
+this project to follow good practices. Credentials are mounted using a volume (see docker-compose.yml).
 
 
 

@@ -1,5 +1,9 @@
 # from base image node
+FROM jrottenberg/ffmpeg:3.3-alpine
 FROM node:14.15.1-alpine
+
+# copy ffmpeg bins from first image
+COPY --from=0 / /
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

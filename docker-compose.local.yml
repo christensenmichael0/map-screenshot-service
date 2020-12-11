@@ -12,7 +12,7 @@ services:
       - 15671:15671
       - 15672:15672
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      test: rabbitmq-diagnostics -q ping
       interval: 5s
       timeout: 15s
       retries: 5
@@ -27,33 +27,6 @@ services:
       - "27017:27017"
     networks:
       - app-network
-
-#  image-capture:
-#    container_name: image-capture
-#    build:
-#      context: '.'
-#      dockerfile: Dockerfile
-#    depends_on:
-#      - rabbitmq
-#      - mongo
-#    environment:
-#      - CONN_URL=amqp://rabbitmq
-#      - MONGO_URL=mongodb://mongo:27017
-#    restart: on-failure
-#    ports:
-#      - 5005:5005
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.50'
-#          memory: 3G
-#        reservations:
-#          cpus: '0.1'
-#          memory: 50M
-#    networks:
-#      - app-network
-#    links:
-#      - rabbitmq
 
 volumes:
   rabbitmq_data: {}

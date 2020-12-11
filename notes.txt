@@ -7,6 +7,9 @@
 // https://github.com/geotiffjs/geotiff.js/blob/master/README.md
 // https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
 
+// alternate ffmpeg docker install
+https://github.com/rickydunlop/nodejs-ffmpeg/blob/master/Dockerfile
+
 // for testing only
 // await image.writeAsync(`output/${Date.now()}_test.png`);
 
@@ -28,4 +31,8 @@
 
 docker-compose -f docker-compose.local.yml up -d
 
-docker build -t screenshot-service:latest .
+docker build -t screenshot-service:ffmpeg .
+
+
+docker run -it 4ec780ad3e45 /bin/sh
+ffmpeg -version
