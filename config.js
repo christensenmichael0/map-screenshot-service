@@ -17,8 +17,8 @@ const PENDING = 'PENDING';
 const FAILED = 'FAILED';
 const SUCCESS = 'SUCCESS';
 
-// max height of map image
-const MAX_IMAGE_HEIGHT = 700;
+// max height of map image (images with height > 600 can crash ffmpeg: may need to adjust ffmpeg settings)
+const MAX_IMAGE_HEIGHT = 600;
 
 // cache expiration for job-specific basemap and legend images
 const EXPIRE = 300; // seconds

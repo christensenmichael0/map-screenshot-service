@@ -7,6 +7,9 @@
 // https://github.com/geotiffjs/geotiff.js/blob/master/README.md
 // https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
 
+// alternate ffmpeg docker install
+https://github.com/rickydunlop/nodejs-ffmpeg/blob/master/Dockerfile
+
 // for testing only
 // await image.writeAsync(`output/${Date.now()}_test.png`);
 
