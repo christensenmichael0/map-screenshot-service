@@ -107,8 +107,9 @@ const convertImagesToMovie = async (id, frames, fps = 1, format = 'mp4') => {
         const command = ffmpeg()
             .input(imagesStream)
             .videoCodec('libx264')
-            .fps(fps)
-            .outputOptions('-pix_fmt yuv420p')
+            .outputOptions(['-pix_fmt yuv420p', `-r ${fps}`])
+            .withFPSInput(fps)
+            .withFpsOutput(fps)
             .on('error', function(err) {
                 console.log(`ffmpeg image to movie failure: ${id} -- ${err.message}`);
                 reject(err);
