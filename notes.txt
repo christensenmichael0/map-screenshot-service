@@ -31,6 +31,8 @@ https://github.com/rickydunlop/nodejs-ffmpeg/blob/master/Dockerfile
 
 docker-compose -f docker-compose.local.yml up -d
 
+docker-compose -f docker-compose.prod.yml up --build -d
+
 docker build -t screenshot-service:ffmpeg .
 
 

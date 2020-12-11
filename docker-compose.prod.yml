@@ -28,8 +28,8 @@ services:
     networks:
       - app-network
 
-  app:
-    container_name: app
+  server:
+    container_name: server
     build:
       context: '.'
       dockerfile: Dockerfile
@@ -41,6 +41,24 @@ services:
       - MONGO_URL=mongodb://mongo:27017
     ports:
       - "5005:5005"
+    restart: always
+    networks:
+      - app-network
+      - oceansmap
+    command: node app.js
+
+  workers:
+    container_name: workers
+    build:
+      context: '.'
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - mongo
+      - server
+    environment:
+      - CONN_URL=amqp://rabbitmq:5672
+      - MONGO_URL=mongodb://mongo:27017
     volumes:
       - $HOME/.aws/credentials:/root/.aws/credentials:ro
     restart: always
@@ -54,7 +72,7 @@ services:
           memory: 50M
     networks:
       - app-network
-      - oceansmap
+    command: node clusteredWorker.js
 
 volumes:
   rabbitmq_data: {}
