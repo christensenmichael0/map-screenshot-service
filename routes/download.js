@@ -16,9 +16,8 @@ app.get('/:id', async (req, res) => {
 
     let {objectKey} = jobInfo;
     try {
-        let {contentType, data} = await getObject(objectKey);
-        res.contentType(contentType);
-        res.send(data);
+        let s3ObjectStream = getObject(objectKey).createReadStream();
+        s3ObjectStream.pipe(res);
     } catch (err) {
         res.send('failed to get resource').status(500);
     }

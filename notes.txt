@@ -38,3 +38,10 @@ docker build -t screenshot-service:ffmpeg .
 
 docker run -it 4ec780ad3e45 /bin/sh
 ffmpeg -version
+
+
+// curl commands
+curl -v http://localhost:5005/api/download/5fd4152ff433b3876eecc356
+
+// headers only
+curl -s -o /dev/null -D - http://localhost:5005/api/download/5fd4152ff433b3876eecc356
