@@ -33,7 +33,7 @@ See POSTMAN collection for example requests:
 
 Node v14.5.0
 
-#### Run locally
+#### Developing Locally
 
 Install dependencies:
 ```
@@ -56,11 +56,16 @@ npm run start
 npm run worker
 ```
 
-* In production use a cluster of workers.
 
-#### Run with Docker
+#### Running with Docker
+To start the express server and the workers in the same container run (default on dev server):<br>
 ```
 docker-compose up --build -d
+```
+
+To start the express server and the workers in separate containers you can alternatively run:<br>
+```
+docker-compose -f docker-compose.prod.yml up --build -d
 ```
 
 * The project is setup to use AWS credentials from the host machine. Credentials should not be included anywhere in
