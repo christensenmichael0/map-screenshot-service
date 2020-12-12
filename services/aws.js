@@ -7,24 +7,20 @@ const s3 = new AWS.S3({});
 /**
  *
  * @param key
- * @return {Promise<{data: S3.Body, contentType: S3.ContentType}>}
+ * @return {Request<S3.GetObjectOutput, AWSError>}
  */
-const getObject = async key => {
+const getObject = key => {
 
     const options = {
         Bucket: S3_BUCKET_NAME,
         Key: key
     };
 
-    let resp;
     try {
-        resp = await s3.getObject(options).promise();
-        resp = {contentType: resp['ContentType'], data: resp.Body};
+        return s3.getObject(options);
     } catch (err) {
         throw err;
     }
-
-    return resp;
 };
 
 /**
