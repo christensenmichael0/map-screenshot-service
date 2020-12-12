@@ -26,8 +26,9 @@ Routes:
 /api/job-status/{someJobId} (GET)<br>
 /api/download/{someJobId} (GET)<br>
 
-See POSTMAN collection for example requests:
+See POSTMAN collection in project root for example requests (import directly into POSTMAN):<br>
 
+image-and-animation-generation.postman_collection.json
 
 ## Getting Started
 
@@ -56,9 +57,8 @@ npm run start
 npm run worker
 ```
 
-
 #### Running with Docker
-To start the express server and the workers in the same container run (default on dev server):<br>
+To start the express server and the workers in the same container (default on dev server):<br>
 ```
 docker-compose up --build -d
 ```
@@ -70,6 +70,12 @@ docker-compose -f docker-compose.prod.yml up --build -d
 
 * The project is setup to use AWS credentials from the host machine. Credentials should not be included anywhere in
 this project to follow good practices. Credentials are mounted using a volume (see docker-compose.yml).
+
+#### RabbitMQ
+Use the rabbitMQ management system to view messages in the "animation" and "image" queue.
+This admin tool can also be used to purge messages and delete queues:<br>
+
+http://localhost:15672/#/queues
 
 
 
