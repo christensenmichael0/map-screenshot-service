@@ -17,8 +17,8 @@ const PENDING = 'PENDING';
 const FAILED = 'FAILED';
 const SUCCESS = 'SUCCESS';
 
-// max height of map image (images with height > 600 can crash ffmpeg: may need to adjust ffmpeg settings)
-const MAX_IMAGE_HEIGHT = 600;
+// large frames can crash ffmpeg
+const MAX_VIDEO_HEIGHT = 800;
 
 // cache expiration for job-specific basemap and legend images
 const EXPIRE = 300; // seconds
@@ -34,7 +34,7 @@ module.exports = {
     PENDING,
     FAILED,
     SUCCESS,
-    MAX_IMAGE_HEIGHT,
+    MAX_VIDEO_HEIGHT,
     MAX_WORKERS,
     MAX_REQUEST_CONCURRENCY,
     MAX_FRAME_CONSTRUCTION_CONCURRENCY,
