@@ -196,6 +196,27 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "download-animation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5005/api/download/5fd4c16f7059b98b4c5cffd9.mp4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5005",
+					"path": [
+						"api",
+						"download",
+						"5fd4c16f7059b98b4c5cffd9.mp4"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
