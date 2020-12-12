@@ -5,7 +5,7 @@ const stream = require('stream');
 const generateSingleImage = require('./generateSingleImage');
 const parsePayload = require('../utilities/parsePayload');
 const pify = require('pify');
-const {MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
+const {MAX_VIDEO_HEIGHT, MAX_FRAME_CONSTRUCTION_CONCURRENCY} = require('../config');
 
 /**
  *
@@ -110,6 +110,7 @@ const convertImagesToMovie = async (id, frames, fps = 1, format = 'mp4') => {
             .outputOptions(['-pix_fmt yuv420p', `-r ${fps}`])
             .withFPSInput(fps)
             .withFpsOutput(fps)
+            .size(`?x${MAX_VIDEO_HEIGHT}`)
             .on('error', function(err) {
                 console.log(`ffmpeg image to movie failure: ${id} -- ${err.message}`);
                 reject(err);

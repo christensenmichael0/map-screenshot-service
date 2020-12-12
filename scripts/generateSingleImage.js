@@ -2,9 +2,8 @@ const buildBasemapCache = require('../utilities/buildBasemapCache');
 const buildLegendCache = require('../utilities/buildLegendCache');
 const buildLayers = require('../utilities/buildLayers');
 const {buildLayerUrl, addMapTimeProp} = require('../utilities/layer');
-const {assembleImageComponents, composeImage,
-    resizeImage} = require('../utilities/image');
-const {MAX_IMAGE_HEIGHT} = require('../config');
+const {assembleImageComponents, composeImage} = require('../utilities/image');
+
 
 const generateSingleImage = async payload => {
 
@@ -24,7 +23,6 @@ const generateSingleImage = async payload => {
     }
 
     //  cleanup query parameters
-    // let layerArr = cleanupLayerParams(data);
     layers = addMapTimeProp(layers, mapTime);
 
     // assemble all legends
@@ -56,21 +54,10 @@ const generateSingleImage = async payload => {
         throw err;
     }
 
-    // resize the image if necessary
-    let resizedImage = composedImage;
-    try {
-        if (composedImage.getHeight() > MAX_IMAGE_HEIGHT) {
-            resizedImage = await resizeImage(composedImage.clone(), null, MAX_IMAGE_HEIGHT);
-        }
-    } catch (err) {
-        resizedImage = composedImage;
-        console.log(err);
-    }
-
     // add headers and legends
     let outputImage;
     try {
-        outputImage = await assembleImageComponents(layers, resizedImage, legendImage);
+        outputImage = await assembleImageComponents(layers, composedImage, legendImage);
     } catch (err) {
         console.log(err);
         throw err;
