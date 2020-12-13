@@ -104,11 +104,11 @@ const getImageSeries = async (urls, fallbackDimensions) => {
  * @param height
  * @return {Promise<*>}
  */
-const createEmptyImage = async (width, height, bgHexStr = '#ffffff') => {
+const createEmptyImage = async (width, height, bgHexStr = undefined) => {
     let image;
 
     try {
-        image = await new Jimp(width, height, bgHexStr); // 0x0
+        image = await new Jimp(width, height, bgHexStr);
     } catch (err) {
         console.log(err);
         throw err;
@@ -310,7 +310,7 @@ const assembleImageComponents = async (dataLayers, baseImage, legendImage, frame
     // create outer container
     let container;
     try {
-        container = await createEmptyImage(containerWidth, containerHeight);
+        container = await createEmptyImage(containerWidth, containerHeight,'#ffffff');
     } catch (err) {
         throw err;
     }

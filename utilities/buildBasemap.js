@@ -28,13 +28,13 @@ const usePacificMapStitch = bbox => {
 const getBasemapTemplate = url => {
     let bboxRegex = /bbox=/i;
 
-    let tileRegex = /\d+\/\d+\/\d+/i;
+    let tileRegex = /\/(\d+\/\d+\/\d+)(\.\w{3})?/i;
 
     let isBboxMatch = url.match(bboxRegex);
     let isTileMatch = url.match(tileRegex);
 
     if (!!isBboxMatch) url = url.replace(isBboxMatch[0], `bbox=${BBOX_REPLACE_STR}`);
-    if (!!isTileMatch) url = url.replace(isTileMatch[0], TILE_REPLACE_STR);
+    if (!!isTileMatch) url = url.replace(isTileMatch[1], TILE_REPLACE_STR);
 
     return {splitOnTile: !!isBboxMatch, url};
 };

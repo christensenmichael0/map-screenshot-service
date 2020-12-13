@@ -1,47 +1,25 @@
-// browse to: http://localhost:15672/#/queues (when testing locally)
-
-// https://medium.com/bb-tutorials-and-thoughts/how-to-write-production-ready-node-js-rest-api-javascript-version-db64d3941106
-// https://medium.com/bb-tutorials-and-thoughts/containerize-your-node-js-rest-api-and-run-it-on-docker-bae4c4ef793c
-
-// https://gis.stackexchange.com/questions/22890/geotiff-file-creation-from-tiff-file
-// https://github.com/geotiffjs/geotiff.js/blob/master/README.md
-// https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
+// General reading
+https://medium.com/bb-tutorials-and-thoughts/how-to-write-production-ready-node-js-rest-api-javascript-version-db64d3941106
+https://medium.com/bb-tutorials-and-thoughts/containerize-your-node-js-rest-api-and-run-it-on-docker-bae4c4ef793c
+https://gis.stackexchange.com/questions/22890/geotiff-file-creation-from-tiff-file
+https://github.com/geotiffjs/geotiff.js/blob/master/README.md
+https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
 
 // alternate ffmpeg docker install
 https://github.com/rickydunlop/nodejs-ffmpeg/blob/master/Dockerfile
 
 // for testing only
-// await image.writeAsync(`output/${Date.now()}_test.png`);
-
-// various package.json scripts
-"start": "node app.js",
-"worker": "node worker.js",
-"worker-test":"wait-on tcp:5005 && node worker.js",
-"clustered:worker": "node clusteredWorker.js",
-"start:dev": "run-p start worker",
-"start:dev:test": "concurrently -c \"blue,magenta\" \"npm:start\" \"npm:worker-test\"",
-"start:dev:clustered": "run-p start clustered:worker",
-"prod": "node dist/api.bundle.js",
-"eslint": "eslint ./",
-"eslint-fix": "eslint ./ --fix",
-"build": "webpack",
-"test": "echo \"Error: no test specified\" && exit 1"
+await image.writeAsync(`output/${Date.now()}_test.png`);
 
 // some useful docker commands
-
 docker-compose -f docker-compose.local.yml up -d
-
 docker-compose -f docker-compose.prod.yml up --build -d
-
 docker build -t screenshot-service:ffmpeg .
-
-
 docker run -it 4ec780ad3e45 /bin/sh
-ffmpeg -version
 
+// get ffmpeg version
+ffmpeg -version
 
 // curl commands
 curl -v http://localhost:5005/api/download/5fd4152ff433b3876eecc356
-
-// headers only
 curl -s -o /dev/null -D - http://localhost:5005/api/download/5fd4152ff433b3876eecc356
