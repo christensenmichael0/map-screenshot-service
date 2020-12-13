@@ -8,7 +8,8 @@ const {assembleImageComponents, composeImage} = require('../utilities/image');
 const generateSingleImage = async payload => {
 
     const {id, data} = payload;
-    let {url, zoom, bbox, params, map_time: mapTime} = data['basemap'];
+    let {url, zoom, bbox, params, map_time: mapTime,
+        width, height} = data['basemap'];
     let basemapUrl = buildLayerUrl(url, params);
 
     let layers = data['overlays'];
@@ -38,8 +39,7 @@ const generateSingleImage = async payload => {
     // assemble all data layers
     let dataImage;
     try {
-        let layerUrls = layers.map(layer => layer['url']);
-        dataImage = await buildLayers(layerUrls);
+        dataImage = await buildLayers(layers, {zoom, bbox, width, height});
     } catch (err) {
         console.log(err);
         throw err;
