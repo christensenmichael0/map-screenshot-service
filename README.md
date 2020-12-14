@@ -71,6 +71,20 @@ docker-compose -f docker-compose.prod.yml up --build -d
 * The project is setup to use AWS credentials from the host machine. Credentials should not be included anywhere in
 this project to follow good practices. Credentials are mounted using a volume (see docker-compose.yml).
 
+#### Postman Request Descriptions
+
+single-layer-image: generate an image with a single layer on GEBCO basemap<br>
+single-layer-image (gray tile basemap): generate an image with a single layer on an ESRI light gray tile basemap.<br>
+tile-data-layer: generate an image with a tile basemap and a tile data layer<br>
+image w/2 layers: generate an image with 2 data layers on GEBCO basemap<br>
+IDL crossing: generate an image with a single layer that crosses the international date line.<br>
+animation-generation: generate an mp4 file with a single layer and multiple frames<br>
+animation-with-2-layers: generate an mp4 file with multiple layers and multiple frames<br>
+get job status: Get the status of a particular job<br>
+download-image: Download an image.<br>
+download-animation: Download an animation.<br>
+
+
 #### RabbitMQ
 Use the rabbitMQ management system to view messages in the "animation" and "image" queue.
 This admin tool can also be used to purge messages and delete queues:<br>
