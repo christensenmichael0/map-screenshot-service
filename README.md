@@ -83,6 +83,8 @@ image w/2 layers: generate an image with 2 data layers on GEBCO basemap<br>
 
 IDL crossing: generate an image with a single layer that crosses the international date line.<br>
 
+depth-label: generate an image with a single layer that shows a depth value in header<br>
+
 animation-generation: generate an mp4 file with a single layer and multiple frames<br>
 
 animation-with-2-layers: generate an mp4 file with multiple layers and multiple frames<br>

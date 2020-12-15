@@ -16,14 +16,16 @@ const addMapTimeProp = (layers, mapTime) => {
 
 const buildLayerLabel = attributes => {
 
-    let outputStr = '';
+    let outputArr = [];
     for (let attr of attributes) {
-        if (attr['showKey']) {
-            outputStr = outputStr += `${attr['key']}: ${attr['value']} `;
+        let keyVal = '';
+        if (attr['showKey'] === 'true') {
+            keyVal = `${attr['key']}: `;
         }
+        outputArr.push(`${keyVal}${attr['value']}`);
     }
 
-    return outputStr.trim();
+    return outputArr.join(', ').trim();
 };
 
 
