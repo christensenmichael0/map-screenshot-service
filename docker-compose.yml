@@ -28,8 +28,8 @@ services:
     networks:
       - app-network
 
-  app:
-    container_name: app
+  img_anim_tools:
+    container_name: img_anim_tools
     build:
       context: '.'
       dockerfile: Dockerfile
