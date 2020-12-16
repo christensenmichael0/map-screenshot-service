@@ -23,3 +23,7 @@ ffmpeg -version
 // curl commands
 curl -v http://localhost:5005/api/download/5fd4152ff433b3876eecc356
 curl -s -o /dev/null -D - http://localhost:5005/api/download/5fd4152ff433b3876eecc356
+
+// local tunneling (where fmis-dev is the fmis server). This allows you to use Postman to send request to the service
+// running on the dev machine
+ssh -L 5005:localhost:5005 fmis-dev
